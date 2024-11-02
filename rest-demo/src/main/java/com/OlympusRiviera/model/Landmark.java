@@ -1,13 +1,11 @@
 package com.OlympusRiviera.model;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name="Landmark")
+@Table(name = "Landmark")
 public class Landmark {
 
     @Id
@@ -18,18 +16,24 @@ public class Landmark {
     private String category;
     private Float rating;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
     // No-argument constructor
-    public Landmark() {
-        // Optionally initialize defaults here if necessary
-    }
-    public Landmark(String landmarkId, String name, String description, String location, String category, Float rating) {
+    public Landmark() {}
+
+    public Landmark(String name, String description, String location, String category, Float rating) {
         this.landmarkId = generateLandmarkId();
         this.name = name;
         this.description = description;
         this.location = location;
         this.category = category;
         this.rating = rating;
-        this.updatedAt = new Date();
+        this.createdAt = new Date();  // Initialize createdAt
+        this.updatedAt = new Date();  // Initialize updatedAt
     }
 
     private String generateLandmarkId() {
@@ -41,64 +45,34 @@ public class Landmark {
         if (this.landmarkId == null || this.landmarkId.trim().isEmpty()) {
             this.landmarkId = generateLandmarkId();
         }
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.createdAt = new Date();  // Set createdAt when the entity is first persisted
+        this.updatedAt = new Date();  // Initialize updatedAt
     }
 
-    //Created at stamp time
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = new Date();  // Update only updatedAt when an update occurs
+    }
 
-    //Updated at stamp time
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
     // Getters and setters
+    public String getLandmarkId() { return landmarkId; }
+    public void setLandmarkId(String landmarkId) { this.landmarkId = landmarkId; }
 
-    public String getLandmarkId() {
-        return landmarkId;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setLandmarkId(String landmarkId) {
-        this.landmarkId = landmarkId;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getName() {
-        return name;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public String getDescription() {
-        return description;
-    }
+    public Float getRating() { return rating; }
+    public void setRating(Float rating) { this.rating = rating; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Float getRating() {
-        return rating;
-    }
-
-    public void setRating(Float rating) {
-        this.rating = rating;
-    }
+    public Date getCreatedAt() { return createdAt; }
+    public Date getUpdatedAt() { return updatedAt; }
 }
