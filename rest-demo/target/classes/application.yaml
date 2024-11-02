@@ -1,0 +1,15 @@
+##//for the connection with mysql
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/olympus_riviera?useSSL-false
+#    username: root
+#    password: 1234
+spring:
+  datasource:
+    url: jdbc:mysql://sql7.freemysqlhosting.net/sql7742211?useSSL=false
+    username: sql7742211
+    password: 8rWqFEQDhs
+
+
+  #JPA SETTINGS
+  jpa.hibernate.ddl_auto: update
