@@ -6,9 +6,9 @@
 #    password: 1234
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:8080/olympus_riviera?useSSL-false
-    username: your_username
-    password: your_password
+    url: jdbc:postgresql://localhost:5432/olympus_riviera?useSSL-false
+    username: postgres
+    password: olympus_riviera
   jpa:
     hibernate:
       ddl-auto: update
