@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
-@Table(name="User")
+//@Entity
+//@Table(name="User")
 public class User {
 
     @Id

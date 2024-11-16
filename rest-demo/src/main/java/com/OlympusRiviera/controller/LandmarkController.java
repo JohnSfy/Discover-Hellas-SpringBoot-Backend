@@ -8,7 +8,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/landmark")
+@RequestMapping("/olympus_riviera/landmark")
 public class LandmarkController {
     LandmarkService landmarkService;
     public LandmarkController(LandmarkService landmarkService){
@@ -40,9 +40,10 @@ public class LandmarkController {
     }
 
 
-    @PutMapping
-    public String updateLandmark(@RequestBody Landmark landmark){
-//        this.cloudVendor = cloudVendor;
+    @PutMapping("{landmarkId}") // Include the landmarkId in the path
+    public String updateLandmark(@PathVariable String landmarkId, @RequestBody Landmark landmark) {
+        // Assuming you want to update the landmark using its ID
+        landmark.setLandmarkId(landmarkId); // Set the ID from the URL to the request body
         landmarkService.updateLandmark(landmark);
         return "Landmark Updated Successfully";
     }
