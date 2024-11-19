@@ -6,7 +6,7 @@
 #    password: 1234
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/olympus_riviera?ssl=false
+    url: jdbc:postgresql://localhost:5432/api?ssl=false
     username: postgres
     password: olympus_riviera
   jpa:
