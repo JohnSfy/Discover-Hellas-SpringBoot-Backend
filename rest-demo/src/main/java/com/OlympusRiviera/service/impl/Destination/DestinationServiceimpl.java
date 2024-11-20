@@ -1,8 +1,8 @@
-package com.OlympusRiviera.service.impl;
+package com.OlympusRiviera.service.impl.Destination;
 
-import com.OlympusRiviera.model.destination;
-import com.OlympusRiviera.repository.DestinationRepository;
-import com.OlympusRiviera.service.DestinationService;
+import com.OlympusRiviera.model.Destination.Destination;
+import com.OlympusRiviera.repository.Destination.DestinationRepository;
+import com.OlympusRiviera.service.Destination.DestinationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,13 +18,13 @@ public class DestinationServiceimpl implements DestinationService {
 
     // Implement the methods for interacting with the landmark repository
     @Override
-    public String createDestination(destination destination) {
+    public String createDestination(Destination destination) {
         destinationRepository.save(destination);
         return "Success";
     }
 
     @Override
-    public String updateDestination(destination destination) {
+    public String updateDestination(Destination destination) {
 //        more logic
         destinationRepository.save(destination);
         return "Update Success";
@@ -37,13 +37,13 @@ public class DestinationServiceimpl implements DestinationService {
     }
 
     @Override
-    public destination getDestination(String destination_id) {
+    public Destination getDestination(String destination_id) {
 
         return destinationRepository.findById(destination_id).get();
     }
 
     @Override
-    public List<destination> getAllDestinations() {
+    public List<Destination> getAllDestinations() {
         return destinationRepository.findAll();
     }
 
