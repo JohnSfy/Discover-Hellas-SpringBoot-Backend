@@ -3,7 +3,6 @@ package com.OlympusRiviera.service.impl.Destination;
 import com.OlympusRiviera.model.Destination.DestinationStat;
 import com.OlympusRiviera.repository.Destination.DestinationStatRepository;
 import com.OlympusRiviera.service.Destination.DestinationStatService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +18,6 @@ public class DestinationStatServiceimpl implements DestinationStatService {
 
     // Implement the required methods here
     // Create, update, delete, and retrieve destination statistics
-    @Override
-    @Transactional
     public String createDestinationStat(DestinationStat destinationStat) {
         destinationStatRepository.save(destinationStat);
         return "Success";

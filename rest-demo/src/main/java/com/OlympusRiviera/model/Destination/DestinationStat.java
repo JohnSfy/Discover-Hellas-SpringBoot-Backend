@@ -49,8 +49,8 @@ public class DestinationStat {
         if (this.createdAt == null) {
             this.createdAt = new Date();
         }
-        if (this.destination_id == null) {
-            this.destination_id = generateId();
+        if (this.stat_id == null) {
+            this.stat_id = generateId();
         }
         this.updatedAt = new Date();
     }
