@@ -6,8 +6,8 @@
 #    password: 1234
 spring:
   datasource:
-#    url: jdbc:postgresql://localhost:5432/api?ssl=false
-    url: jdbc:postgresql://ep-divine-violet-a21u7316.eu-central-1.aws.neon.tech/olympus_riviera?user=olympus_riviera_owner&password=wHa8KvuZNf7e&sslmode=require
+     url: jdbc:postgresql://localhost:5432/api?ssl=false
+#    url: jdbc:postgresql://ep-divine-violet-a21u7316.eu-central-1.aws.neon.tech/olympus_riviera?user=olympus_riviera_owner&password=wHa8KvuZNf7e&sslmode=require
 #    username: postgres
 #    password: olympus_riviera
   jpa:
