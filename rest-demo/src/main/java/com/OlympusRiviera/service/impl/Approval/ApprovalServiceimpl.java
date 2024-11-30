@@ -26,4 +26,10 @@ public class ApprovalServiceimpl implements ApprovalService {
     public List<Approval> getAllApprovals() {
         return approvalRepository.findAll();
     }
+
+    @Override
+    public String createApproval(Approval approval) {
+        approvalRepository.save(approval);  // Save the approval in the database
+        return "Successfully created";
+    }
 }
