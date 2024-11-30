@@ -3,12 +3,13 @@ package com.OlympusRiviera.service.impl.Approval;
 
 import com.OlympusRiviera.model.Approval.Approval;
 import com.OlympusRiviera.repository.Approval.ApprovalRepository;
+import com.OlympusRiviera.service.Approval.ApprovalService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ApprovalServiceimpl {
+public class ApprovalServiceimpl implements ApprovalService {
 
     ApprovalRepository approvalRepository;
 

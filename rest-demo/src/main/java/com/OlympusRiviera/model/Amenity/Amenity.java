@@ -12,6 +12,7 @@ import java.util.UUID;
 @Data
 public class Amenity {
 
+    @Id
     private String amenity_id;
     private String name;
     private String category_id;

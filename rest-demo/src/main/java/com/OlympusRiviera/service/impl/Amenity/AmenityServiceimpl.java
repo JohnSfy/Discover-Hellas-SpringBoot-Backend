@@ -2,10 +2,13 @@ package com.OlympusRiviera.service.impl.Amenity;
 
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.repository.Amenity.AmenityRepository;
+import com.OlympusRiviera.service.Amenity.AmenityService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class AmenityServiceimpl {
+@Service
+public class AmenityServiceimpl implements AmenityService {
 
     AmenityRepository amenityRepository;
 
