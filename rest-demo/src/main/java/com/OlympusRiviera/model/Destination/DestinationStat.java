@@ -41,7 +41,7 @@ public class DestinationStat {
     }
 
     private String generateId() {
-        return "deststat_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8); // Prefix with 'destcat'
+        return "dstst_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8); // Prefix with 'destcat'
     }
 
     @PrePersist

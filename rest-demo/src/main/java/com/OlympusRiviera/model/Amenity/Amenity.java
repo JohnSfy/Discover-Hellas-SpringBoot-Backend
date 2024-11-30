@@ -1,31 +1,30 @@
-package com.OlympusRiviera.model.Destination;
+package com.OlympusRiviera.model.Amenity;
+
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Destination")
+@Table(name = "Amenity")
 @Data
-public class Destination {
+public class Amenity {
 
-    @Id
-    private String destination_id;
-
+    private String amenity_id;
     private String name;
     private String category_id;
-    private String description;
-    private String longitude;
+    private String provider_id;
+    private String phone;
+    private String email;
+    private String status;
     private String latitude;
+    private String longitude;
+    private String description;
 
     @Column(columnDefinition = "TEXT") // Allow larger content
     private String photos;
-
-    private String link_360_view;
-
     @Column(updatable = false) // Prevent overwriting during updates
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -33,33 +32,38 @@ public class Destination {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    // Default constructor
-    public Destination() {}
+    public Amenity() {};
 
-    public Destination(String name, String category_id, String description, String latitude, String longitude, String photos, String link_360_view) {
-        this.destination_id = generateId();
+    public Amenity(String amenity_id, String name, String category_id, String provider_id, String phone, String email, String status, String latitude, String longitude, String description, String photos, Date createdAt, Date updatedAt) {
+        this.amenity_id = generateId();
         this.name = name;
         this.category_id = category_id;
+        this.provider_id = provider_id;
+        this.phone = phone;
+        this.email = email;
+        this.status = status;
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
         this.photos = photos;
-        this.link_360_view = link_360_view;
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
 
+
+
     private String generateId() {
-        return "dest_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8); // Prefix with 'destcat'
+        return "amen_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8); // Prefix with 'destcat'
     }
+
 
     @PrePersist
     public void prePersist() {
         if (this.createdAt == null) {
             this.createdAt = new Date();
         }
-        if (this.destination_id == null) {
-            this.destination_id = generateId();
+        if (this.amenity_id == null) {
+            this.amenity_id = generateId();
         }
         this.updatedAt = new Date();
     }
