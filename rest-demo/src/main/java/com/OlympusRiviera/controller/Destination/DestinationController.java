@@ -59,6 +59,6 @@ public class DestinationController {
     public ResponseEntity<String> deleteDestination(@PathVariable String destination_id) {
         destinationService.deleteDestination(destination_id);
         String message = "Destination with id: " + destination_id + " Deleted Successfully";
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message); // Return 204 No Content after deletion
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 }

@@ -60,6 +60,6 @@ public class DestinationCategoryController {
     public ResponseEntity<String> deleteDestinationCategory(@PathVariable String category_id) {
         destinationCategoryService.deleteDestinationCategory(category_id);
         String message = "Destination Category with id: " + category_id + " Deleted Successfully";
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message); // Return 204 No Content after deletion
+        return ResponseEntity.status(HttpStatus.OK).body(message); // Return 204 No Content after deletion
     }
 }
