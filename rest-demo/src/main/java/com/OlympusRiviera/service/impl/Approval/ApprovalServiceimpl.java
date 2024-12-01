@@ -32,4 +32,10 @@ public class ApprovalServiceimpl implements ApprovalService {
         approvalRepository.save(approval);  // Save the approval in the database
         return "Successfully created";
     }
+
+    public String updateApproval(Approval approval) {
+//        more logic
+        approvalRepository.save(approval);
+        return "Update Success";
+    }
 }

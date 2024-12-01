@@ -35,4 +35,5 @@ public class AmenityControllerPOTAP {
         return ResponseEntity.status(HttpStatus.OK).body(message); // Use 200 OK instead
     }
 
+
 }

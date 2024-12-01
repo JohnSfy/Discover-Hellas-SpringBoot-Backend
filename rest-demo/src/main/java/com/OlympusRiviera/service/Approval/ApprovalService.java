@@ -11,4 +11,7 @@ public interface ApprovalService {
 
     public String createApproval(Approval approval);
 
+    public String updateApproval(Approval Approval);
+
+
 }

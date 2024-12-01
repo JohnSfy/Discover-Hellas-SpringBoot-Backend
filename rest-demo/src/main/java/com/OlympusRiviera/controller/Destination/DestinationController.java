@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/api/admin/destination")
+@RequestMapping("/api")
 public class DestinationController {
 
     private final DestinationService destinationService;
@@ -20,7 +21,7 @@ public class DestinationController {
     }
 
     // Get details of a specific destination by ID
-    @GetMapping("/{destination_id}")
+    @GetMapping("/destination/{destination_id}")
     public ResponseEntity<Destination> getDestinationDetails(@PathVariable("destination_id") String destination_id) {
         Destination destinationDetails = destinationService.getDestination(destination_id);
         if (destinationDetails != null) {
@@ -31,14 +32,14 @@ public class DestinationController {
     }
 
     // Get all destination details
-    @GetMapping("/get/all")
+    @GetMapping("/destination/get/all")
     public ResponseEntity<List<Destination>> getAllDestinationDetails() {
         List<Destination> destinations = destinationService.getAllDestinations();
         return ResponseEntity.ok(destinations); // Return 200 OK with the list of destinations
     }
 
-    // Create a new destination
-    @PostMapping("/create")
+    // Create a new destination from POTAP
+    @PostMapping("/admin/destination/create")
     public ResponseEntity<String> createDestinationDetails(@RequestBody Destination destination) {
         destinationService.createDestination(destination);
         String message = "Destination with id: " + destination.getDestination_id() + " Created Successfully";
@@ -46,7 +47,7 @@ public class DestinationController {
     }
 
     // Update an existing destination by ID
-    @PutMapping("/{destination_id}")
+    @PutMapping("/admin/destination/{destination_id}")
     public ResponseEntity<String> updateDestination(@PathVariable String destination_id, @RequestBody Destination destination) {
         destination.setDestination_id(destination_id);
         destinationService.updateDestination(destination);
@@ -55,10 +56,32 @@ public class DestinationController {
     }
 
     // Delete a destination by ID
-    @DeleteMapping("/{destination_id}")
+    @DeleteMapping("/admin/destination/{destination_id}")
     public ResponseEntity<String> deleteDestination(@PathVariable String destination_id) {
         destinationService.deleteDestination(destination_id);
         String message = "Destination with id: " + destination_id + " Deleted Successfully";
         return ResponseEntity.status(HttpStatus.OK).body(message);
+    }
+
+
+    //get all destinations from specific category id
+    @GetMapping("/destination/{category_id}/destinations")
+    public ResponseEntity<?> getDestinationsByCategory(@PathVariable("category_id") String category_id) {
+        // Fetch all destinations
+        List<Destination> allDestinations = destinationService.getAllDestinations();
+
+        // Filter destinations by category_id
+        List<Destination> filteredDestinations = allDestinations.stream()
+                .filter(destination -> category_id.equals(destination.getCategory_id()))
+                .collect(Collectors.toList());
+
+        if (filteredDestinations.isEmpty()) {
+            // Return 404 with a custom message if no destinations are found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No destinations found for category ID: " + category_id);
+        } else {
+            // Return 200 OK with the filtered list
+            return ResponseEntity.ok(filteredDestinations);
+        }
     }
 }

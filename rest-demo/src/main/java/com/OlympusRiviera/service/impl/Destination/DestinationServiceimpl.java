@@ -47,4 +47,5 @@ public class DestinationServiceimpl implements DestinationService {
         return destinationRepository.findAll();
     }
 
+
 }
