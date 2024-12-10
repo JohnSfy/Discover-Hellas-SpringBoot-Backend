@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/admin/amenity")
@@ -18,6 +20,11 @@ public class AmenityControllerPOTAP {
         this.amenityService = amenityService;
     }
 
+    @GetMapping("/get/all")
+    public ResponseEntity<List<Amenity>> getAllAmenityDetails() {
+        List<Amenity> amenities = amenityService.getAllAmenities();
+        return ResponseEntity.ok(amenities); // Return 200 OK with the list of destinations
+    }
 
     @PutMapping("/edit/{amenity_id}")
     public ResponseEntity<String> updateDAmenity(@PathVariable String amenity_id, @RequestBody Amenity amenity) {

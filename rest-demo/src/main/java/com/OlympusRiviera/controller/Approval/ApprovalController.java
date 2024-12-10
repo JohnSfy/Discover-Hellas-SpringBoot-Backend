@@ -52,6 +52,7 @@ public class ApprovalController {
         }
     }
 
+    //Get all Update Requests
     @GetMapping("/admin/approval/amenity/edit-request/get/all")
     public ResponseEntity<Object> getAllUpdateApprovals() {
         // Fetch all approvals
@@ -61,7 +62,7 @@ public class ApprovalController {
         List<Approval> matchingApprovals = allApprovals.stream()
                 .filter(approval -> "Amenity".equals(approval.getEntity_type())
                         && "PENDING".equals(approval.getStatus())
-                        && "Update".equals(approval.getApproval_type()))
+                        && "Edit".equals(approval.getApproval_type()))
                 .collect(Collectors.toList());
 
         if (matchingApprovals.isEmpty()) {
@@ -74,6 +75,7 @@ public class ApprovalController {
         }
     }
 
+    //Get a specific Create request
     @GetMapping("/admin/approval/amenity/add-request/get/{amenity_id}")
     public ResponseEntity<Object> getCreateApprovalDetails(@PathVariable("amenity_id") String amenity_id) {
         // Fetch all approvals
@@ -98,6 +100,7 @@ public class ApprovalController {
         }
     }
 
+    //Get a specific Update Request
     @GetMapping("/admin/approval/amenity/edit-request/get/{amenity_id}")
     public ResponseEntity<Object> getUpdateApprovalDetails(@PathVariable("amenity_id") String amenity_id) {
         // Fetch all approvals
@@ -122,6 +125,7 @@ public class ApprovalController {
         }
     }
 
+    //Update the status of Create Request
     @PutMapping("/admin/approval/amenity/add-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
     public ResponseEntity<String> updateCreateApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
         // Fetch the approval request by amenity_id
@@ -149,10 +153,12 @@ public class ApprovalController {
         return ResponseEntity.ok("Approval request for amenity ID: " + approval.getEntity_id() + " has been updated to status: " + status);
     }
 
+    //Update status of Edit request
     @PutMapping("/admin/approval/amenity/edit-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
     public ResponseEntity<String> updateEditApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
         // Fetch the approval request by amenity_id
         Approval approval = approvalService.getApproval(approval_id);
+        Amenity amenity =  amenityService.getAmenity(approval.getEntity_id());
 
         if (approval == null) {
             // Return 404 Not Found if the approval request does not exist
@@ -161,14 +167,21 @@ public class ApprovalController {
         }
 
         // Check if the request is pending and for a "Create" operation
-        if (!"PENDING".equals(approval.getStatus()) || !"Update".equals(approval.getApproval_type())) {
+        if (!"PENDING".equals(approval.getStatus()) || !"Edit".equals(approval.getApproval_type())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Cannot update status for non-pending or non-create requests.");
+                    .body("Cannot update status for non-pending or non-edit requests.");
         }
 
         // Update the status of the approval request
         approval.setStatus(status); // Status should be either "ACCEPTED" or "REJECTED"
+        amenity.setStatus(status);
         approvalService.updateApproval(approval);
+        amenityService.updateAmenity(amenity);
+
+        //Se
+        if("APPROVED".equals(status)){
+            amenityService.deleteAmenity(approval.getOld_entity_id());
+        }
 
         // Return success message
         return ResponseEntity.ok("Approval request for amenity ID: " + approval.getEntity_id() + " has been updated to status: " + status);

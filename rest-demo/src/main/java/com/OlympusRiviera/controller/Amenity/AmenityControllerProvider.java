@@ -44,21 +44,62 @@ public class AmenityControllerProvider {
         approvalService.createApproval(approval);
 
         // Create a success message
-        String message = "Amenity with id: " + amenity.getAmenity_id() + " created successfully and pending approval";
+        String message = "Amenity with id: " + amenity.getAmenity_id() + " created successfully and pending approval " +"with id "+ approval.getApproval_id();
 
         // Return a response with the success message
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
 
-    @PutMapping("/edit-request/create/{amenity_id}")
-    public ResponseEntity<String> updateDestination(@PathVariable String amenity_id, @RequestBody Amenity amenity) {
-        amenity.setAmenity_id(amenity_id);
-        amenity.setStatus("PENDING");
-        amenityService.updateAmenity(amenity);
-        String message = "Amenity with id: " + amenity.getAmenity_id() + " updated successfully and waiting approval from ΠΟΤΑΠ";
-        return ResponseEntity.ok(message); // Return 200 OK
+//    @PutMapping("/edit-request/create/{amenity_id}")
+//    public ResponseEntity<String> updateDestination(@PathVariable String amenity_id, @RequestBody Amenity amenity) {
+//        amenity.setAmenity_id(amenity_id);
+//        amenity.setStatus("PENDING");
+//        amenityService.updateAmenity(amenity);
+//        String message = "Amenity with id: " + amenity.getAmenity_id() + " updated successfully and waiting approval from ΠΟΤΑΠ";
+//        return ResponseEntity.ok(message); // Return 200 OK
+//    }
+@PutMapping("/edit-request/create/{amenity_id}")
+public ResponseEntity<String> updateOrCreatePendingAmenity(@PathVariable String amenity_id, @RequestBody Amenity updatedAmenity) {
+    // Fetch the existing amenity
+    Amenity existingAmenity = amenityService.getAmenity(amenity_id);
+    if (existingAmenity == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Amenity with id: " + amenity_id + " not found.");
     }
+
+    // Create a new amenity with the updated values
+    Amenity newAmenity = new Amenity();
+    newAmenity.setName(updatedAmenity.getName());
+    newAmenity.setCategory_id(updatedAmenity.getCategory_id());
+    newAmenity.setProvider_id(updatedAmenity.getProvider_id());
+    newAmenity.setPhone(updatedAmenity.getPhone());
+    newAmenity.setEmail(updatedAmenity.getEmail());
+    newAmenity.setLatitude(updatedAmenity.getLatitude());
+    newAmenity.setLongitude(updatedAmenity.getLongitude());
+    newAmenity.setDescription(updatedAmenity.getDescription());
+    newAmenity.setPhotos(updatedAmenity.getPhotos());
+    newAmenity.setStatus("PENDING"); // Set the new amenity's status to PENDING
+
+    // Save the new amenity
+    amenityService.createAmenity(newAmenity);
+
+    // Optionally, create a new approval record for the new amenity
+    Approval approval = new Approval();
+    approval.setEntity_id(newAmenity.getAmenity_id());
+    approval.setOld_entity_id(amenity_id);
+    approval.setEntity_type("Amenity");
+    approval.setApproval_type("Edit"); // Indicating this is for an edit operation
+    approval.setStatus("PENDING");
+    approval.setProvider_id(newAmenity.getProvider_id());
+    approval.setEmployee_id("employee_id_here"); // Replace as needed
+    approvalService.createApproval(approval);
+
+    // Return success message
+    String message = "Updated version of Amenity with id: " + amenity_id + " created as new record with id: " + newAmenity.getAmenity_id() + " and status set to 'PENDING'.";
+    return ResponseEntity.status(HttpStatus.CREATED).body(message);
+}
+
 
     @DeleteMapping("/delete/{amenity_id}")
     public ResponseEntity<String> deleteDestination(@PathVariable String amenity_id) {
