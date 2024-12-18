@@ -4,8 +4,10 @@ package com.OlympusRiviera.controller.Amenity_Event;
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Amenity.AmenityCategory;
 import com.OlympusRiviera.model.Event.Event;
+import com.OlympusRiviera.model.Event.EventCategory;
 import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
+import com.OlympusRiviera.service.Event.EventCategoryService;
 import com.OlympusRiviera.service.Event.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,13 @@ public class PotapController {
     private final AmenityService amenityService;
     private final AmenityCategoryService amenityCategoryService;
     private final EventService eventService;
-    public PotapController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService) {
+    private final EventCategoryService eventCategoryService;
+
+    public PotapController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, EventCategoryService eventCategoryService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
+        this.eventCategoryService = eventCategoryService;
     }
 
     //----------------------------Amenity----------------------------------------------------------
@@ -99,7 +104,7 @@ public class PotapController {
         return ResponseEntity.ok(events); // Return 200 OK with the list of destinations
     }
 
-    // Create a new amenity from potap with status approved
+    // Create a new event from potap with status approved
     @PostMapping("/event/create")
     public ResponseEntity<String> createEventDetails(@RequestBody Event event) {
         event.setStatus("APPROVED");
@@ -122,5 +127,30 @@ public class PotapController {
         eventService.deleteEvent(event_id);
         String message = "Event with id: " + event_id + " Deleted Successfully from ΠΟΤΑΠ";
         return ResponseEntity.status(HttpStatus.OK).body(message); // Use 200 OK instead
+    }
+
+    //-----------------------Event Category Control-----------------------------------
+
+
+    @PostMapping("/event/category/create")
+    public ResponseEntity<String> createEventDetails(@RequestBody EventCategory eventCategory) {
+        eventCategoryService.createEventCategory(eventCategory);
+        String message = "Event Category with id: " + eventCategory.getCategory_id() + " Created Successfully";
+        return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
+    }
+
+    @PutMapping("/event/category/{category_id}")
+    public ResponseEntity<String> updateEventCategory(@PathVariable String category_id, @RequestBody EventCategory eventCategory) {
+        eventCategory.setCategory_id(category_id);
+        eventCategoryService.updateEventCategory(eventCategory);
+        String message = "Event Category with id: " + eventCategory.getCategory_id() + " Updated Successfully";
+        return ResponseEntity.ok(message); // Return 200 OK
+    }
+
+    @DeleteMapping("/event/category/{category_id}")
+    public ResponseEntity<String> deleteEventCategory(@PathVariable String category_id) {
+        eventCategoryService.deleteEventCategory(category_id);
+        String message = "Event Category with id: " + category_id + " Deleted Successfully";
+        return ResponseEntity.status(HttpStatus.OK).body(message); // Return 204 No Content after deletion
     }
 }
