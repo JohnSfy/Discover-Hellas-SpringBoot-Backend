@@ -1,7 +1,9 @@
 package com.OlympusRiviera.controller.Destination;
 
 import com.OlympusRiviera.model.Destination.Destination;
+import com.OlympusRiviera.model.Destination.DestinationStat;
 import com.OlympusRiviera.service.Destination.DestinationService;
+import com.OlympusRiviera.service.Destination.DestinationStatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,11 @@ import java.util.stream.Collectors;
 public class DestinationController {
 
     private final DestinationService destinationService;
+    private final DestinationStatService destinationStatService;
 
-    public DestinationController(DestinationService destinationService) {
+    public DestinationController(DestinationService destinationService, DestinationStatService destinationStatService) {
         this.destinationService = destinationService;
+        this.destinationStatService = destinationStatService;
     }
 
     // Get details of a specific destination by ID
@@ -41,10 +45,25 @@ public class DestinationController {
     // Create a new destination from POTAP
     @PostMapping("/admin/destination/create")
     public ResponseEntity<String> createDestinationDetails(@RequestBody Destination destination) {
+        // Save the destination
         destinationService.createDestination(destination);
-        String message = "Destination with id: " + destination.getDestination_id() + " Created Successfully";
-        return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
+
+        // Initialize the DestinationStat object
+        DestinationStat destinationStat = new DestinationStat();
+        destinationStat.setDestination_id(destination.getDestination_id());
+        destinationStat.setTotal_visits(0);
+        destinationStat.setAverage_rating(0.0f);
+        destinationStat.setTotal_wishlist_items(0);
+        destinationStat.setTotal_feedback_given(0);
+
+        // Save the DestinationStat
+        destinationStatService.createDestinationStat(destinationStat);
+
+        // Response message
+        String message = "Destination with id: " + destination.getDestination_id() + " and associated statistics created successfully";
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
+
 
     // Update an existing destination by ID
     @PutMapping("/admin/destination/{destination_id}")
