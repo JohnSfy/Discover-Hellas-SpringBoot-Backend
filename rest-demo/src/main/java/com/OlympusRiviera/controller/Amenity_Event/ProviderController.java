@@ -65,26 +65,26 @@ public class ProviderController {
                     .body("Event with id: " + event_id + " not found.");
         }
 
-        // Create a new event with the updated values
+        // Create a new event with merged values
         Event newEvent = new Event();
-        newEvent.setName(updatedEvent.getName());
-        newEvent.setCategory_id(updatedEvent.getCategory_id());
-        newEvent.setOrganizer_id(updatedEvent.getOrganizer_id());
-        newEvent.setPhone(updatedEvent.getPhone());
-        newEvent.setEmail(updatedEvent.getEmail());
-        newEvent.setEvent_start(updatedEvent.getEvent_start());
-        newEvent.setEvent_end(updatedEvent.getEvent_end());
-        newEvent.setLatitude(updatedEvent.getLatitude());
-        newEvent.setLongitude(updatedEvent.getLongitude());
-        newEvent.setDescription(updatedEvent.getDescription());
-        newEvent.setPhotos(updatedEvent.getPhotos());
-        newEvent.setSiteLink(updatedEvent.getSiteLink());
-        newEvent.setStatus("PENDING"); // Set the new amenity's status to PENDING
+        newEvent.setName(updatedEvent.getName() != null ? updatedEvent.getName() : existingEvent.getName());
+        newEvent.setCategory_id(updatedEvent.getCategory_id() != null ? updatedEvent.getCategory_id() : existingEvent.getCategory_id());
+        newEvent.setOrganizer_id(updatedEvent.getOrganizer_id() != null ? updatedEvent.getOrganizer_id() : existingEvent.getOrganizer_id());
+        newEvent.setPhone(updatedEvent.getPhone() != null ? updatedEvent.getPhone() : existingEvent.getPhone());
+        newEvent.setEmail(updatedEvent.getEmail() != null ? updatedEvent.getEmail() : existingEvent.getEmail());
+        newEvent.setEvent_start(updatedEvent.getEvent_start() != null ? updatedEvent.getEvent_start() : existingEvent.getEvent_start());
+        newEvent.setEvent_end(updatedEvent.getEvent_end() != null ? updatedEvent.getEvent_end() : existingEvent.getEvent_end());
+        newEvent.setLatitude(updatedEvent.getLatitude() != null ? updatedEvent.getLatitude() : existingEvent.getLatitude());
+        newEvent.setLongitude(updatedEvent.getLongitude() != null ? updatedEvent.getLongitude() : existingEvent.getLongitude());
+        newEvent.setDescription(updatedEvent.getDescription() != null ? updatedEvent.getDescription() : existingEvent.getDescription());
+        newEvent.setPhotos(updatedEvent.getPhotos() != null ? updatedEvent.getPhotos() : existingEvent.getPhotos());
+        newEvent.setSiteLink(updatedEvent.getSiteLink() != null ? updatedEvent.getSiteLink() : existingEvent.getSiteLink());
+        newEvent.setStatus("PENDING"); // Set the new event's status to PENDING
 
-        // Save the new amenity
+        // Save the new event
         eventService.createEvent(newEvent);
 
-        // Optionally, create a new approval record for the new amenity
+        // Optionally, create a new approval record for the new event
         Approval approval = new Approval();
         approval.setEntity_id(newEvent.getEvent_id());
         approval.setOld_entity_id(event_id);
@@ -99,6 +99,7 @@ public class ProviderController {
         String message = "Updated version of Event with id: " + event_id + " created as new record with id: " + newEvent.getEvent_id() + " and status set to 'PENDING'.";
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
+
 
 
     @DeleteMapping("/event/delete/{event_id}")
@@ -149,17 +150,17 @@ public class ProviderController {
                     .body("Amenity with id: " + amenity_id + " not found.");
         }
 
-        // Create a new amenity with the updated values
+        // Create a new amenity with merged values
         Amenity newAmenity = new Amenity();
-        newAmenity.setName(updatedAmenity.getName());
-        newAmenity.setCategory_id(updatedAmenity.getCategory_id());
-        newAmenity.setProvider_id(updatedAmenity.getProvider_id());
-        newAmenity.setPhone(updatedAmenity.getPhone());
-        newAmenity.setEmail(updatedAmenity.getEmail());
-        newAmenity.setLatitude(updatedAmenity.getLatitude());
-        newAmenity.setLongitude(updatedAmenity.getLongitude());
-        newAmenity.setDescription(updatedAmenity.getDescription());
-        newAmenity.setPhotos(updatedAmenity.getPhotos());
+        newAmenity.setName(updatedAmenity.getName() != null ? updatedAmenity.getName() : existingAmenity.getName());
+        newAmenity.setCategory_id(updatedAmenity.getCategory_id() != null ? updatedAmenity.getCategory_id() : existingAmenity.getCategory_id());
+        newAmenity.setProvider_id(updatedAmenity.getProvider_id() != null ? updatedAmenity.getProvider_id() : existingAmenity.getProvider_id());
+        newAmenity.setPhone(updatedAmenity.getPhone() != null ? updatedAmenity.getPhone() : existingAmenity.getPhone());
+        newAmenity.setEmail(updatedAmenity.getEmail() != null ? updatedAmenity.getEmail() : existingAmenity.getEmail());
+        newAmenity.setLatitude(updatedAmenity.getLatitude() != null ? updatedAmenity.getLatitude() : existingAmenity.getLatitude());
+        newAmenity.setLongitude(updatedAmenity.getLongitude() != null ? updatedAmenity.getLongitude() : existingAmenity.getLongitude());
+        newAmenity.setDescription(updatedAmenity.getDescription() != null ? updatedAmenity.getDescription() : existingAmenity.getDescription());
+        newAmenity.setPhotos(updatedAmenity.getPhotos() != null ? updatedAmenity.getPhotos() : existingAmenity.getPhotos());
         newAmenity.setStatus("PENDING"); // Set the new amenity's status to PENDING
 
         // Save the new amenity
@@ -180,6 +181,7 @@ public class ProviderController {
         String message = "Updated version of Amenity with id: " + amenity_id + " created as new record with id: " + newAmenity.getAmenity_id() + " and status set to 'PENDING'.";
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
+
 
 
     @DeleteMapping("/amenity/delete/{amenity_id}")
