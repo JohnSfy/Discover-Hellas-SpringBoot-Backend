@@ -234,7 +234,7 @@ public class ApprovalController {
         if (matchingApprovals.isEmpty()) {
             // Return 404 if no approvals are found with a custom message
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No matching Event approvals found with status 'PENDING' and approval type 'Update'.");
+                    .body("No matching Event approvals found with status 'PENDING' and approval type 'Edit'.");
         } else {
             // Return 200 OK with the filtered list of Event approvals
             return ResponseEntity.ok(matchingApprovals);
@@ -274,7 +274,7 @@ public class ApprovalController {
 
         // Filter approvals by amenity_id, entity_type = "Amenity", status = "PENDING", and approval_type = "Create"
         List<Approval> matchingApprovals = allApprovals.stream()
-                .filter(approval -> "Amenity".equals(approval.getEntity_type())
+                .filter(approval -> "Event".equals(approval.getEntity_type())
                         && "PENDING".equals(approval.getStatus())
                         && "Edit".equals(approval.getApproval_type())
                         && event_id.equals(approval.getEntity_id()))
@@ -284,7 +284,7 @@ public class ApprovalController {
             // Return 404 if no matching approvals are found
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No matching Event approvals found with Event ID: " + event_id
-                            + ", status 'PENDING', and approval type 'Update'.");
+                            + ", status 'PENDING', and approval type 'Edit'.");
         } else {
             // Return 200 OK with the filtered list of matching approvals
             return ResponseEntity.ok(matchingApprovals);
@@ -294,7 +294,7 @@ public class ApprovalController {
     //Update the status of Create Request
     @PutMapping("/admin/approval/event/add-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
     public ResponseEntity<String> updateCreateEventApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
-        // Fetch the approval request by amenity_id
+
         Approval approval = approvalService.getApproval(approval_id);
         Event event =  eventService.getEvent(approval.getEntity_id());
 
