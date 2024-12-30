@@ -1,4 +1,4 @@
-package com.OlympusRiviera.controller.Amenity_Event;
+package com.OlympusRiviera.controller;
 
 
 import com.OlympusRiviera.model.Amenity.Amenity;
@@ -7,6 +7,7 @@ import com.OlympusRiviera.model.Event.Event;
 import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Event.EventService;
+//import com.OlympusRiviera.service.Plan.PlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +23,13 @@ public class GeneralController {
     private final AmenityService amenityService;
     private final AmenityCategoryService amenityCategoryService;
     private final EventService eventService;
+//    private final PlanService planService;
 
     public GeneralController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
+//        this.planService = planService;
     }
 
     //-----------------------Amenity--------------------------------------------------
@@ -134,4 +137,32 @@ public class GeneralController {
             return ResponseEntity.ok(filteredEvents);
         }
     }
+
+
+    //------------------------------------Trip Plan----------------------------------
+
+//    // Create a new plan from user
+//    @PostMapping("/plan/create")
+//    public ResponseEntity<?> createPlanDetails(@RequestBody Plan plan) {
+//        System.out.println("Received Plan: " + plan); // Log the incoming plan
+//        // Save the destination
+//        planService.createPlan(plan);
+//
+//        // Response message
+//        String message = "Plan with id: " + plan.getPlan_id() + " Created Succesfully";
+//        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+//    }
+//
+//
+//    // Get details of a specific destination by ID
+//    @GetMapping("/plan/{plan_id}")
+//    public ResponseEntity<Plan> getPlanDetails(@PathVariable("plan_id") String plan_id) {
+//        Plan planDetails = planService.getPlan(plan_id);
+//        if (planDetails != null) {
+//            return ResponseEntity.ok(planDetails); // Return 200 OK with the destination
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 Not Found if the destination doesn't exist
+//        }
+//    }
+
 }

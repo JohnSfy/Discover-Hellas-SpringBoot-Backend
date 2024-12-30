@@ -20,6 +20,7 @@ public class Approval {
     private String employee_id;
     private String status;
     private String old_entity_id;
+    private String comments;
 
 
     @Column(updatable = false) // Prevent overwriting during updates
@@ -33,7 +34,7 @@ public class Approval {
     public Approval() {
     }
 
-    public Approval(String approval_id, String approval_type, String entity_id, String entity_type, String provider_id, String employee_id, String status, Date createdAt, Date updatedAt, String old_entity_id) {
+    public Approval(String approval_id, String approval_type, String entity_id, String entity_type, String provider_id, String employee_id, String status, Date createdAt, Date updatedAt, String old_entity_id, String comments) {
         this.approval_id = generateId();
         this.approval_type = approval_type;
         this.entity_id = entity_id;
@@ -42,6 +43,7 @@ public class Approval {
         this.employee_id = employee_id;
         this.status = status;
         this.old_entity_id = old_entity_id;
+        this.comments = comments;
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
