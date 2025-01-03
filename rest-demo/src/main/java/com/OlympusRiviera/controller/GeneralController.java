@@ -269,6 +269,56 @@ public class GeneralController {
 
 
 
+    // Get all plans for a specific user by user_id
+    @GetMapping("/plan/user/{user_id}/plans")
+    public ResponseEntity<?> getPlansByUser(@PathVariable("user_id") String user_id,
+                                            @RequestParam(name = "planType", defaultValue = "list") String planType) {
+        // Fetch all plans
+        List<Plan> allPlans = planService.getAllPlans();
+
+        // Filter plans by user_id
+        List<Plan> filteredPlans = allPlans.stream()
+                .filter(plan -> user_id.equals(plan.getUser_id()))
+                .collect(Collectors.toList());
+
+        if (filteredPlans.isEmpty()) {
+            // Return 404 with a custom message if no plans are found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No plans found for user ID: " + user_id);
+        } else {
+            // Map filtered plans to a detailed response structure
+            List<Map<String, Object>> responseList = filteredPlans.stream().map(plan -> {
+                Map<String, Object> response = new HashMap<>();
+                Object parsedPlan;
+
+                // Check the type requested and parse the 'plan' field accordingly
+                if ("list".equalsIgnoreCase(planType)) {
+                    // If the planType is "list", parse it as a List
+                    parsedPlan = plan.getPlanAsObject(List.class);
+                } else if ("map".equalsIgnoreCase(planType)) {
+                    // If the planType is "map", parse it as a Map
+                    parsedPlan = plan.getPlanAsObject(Map.class);
+                } else {
+                    // Default case: Return the raw 'plan' string or handle differently
+                    parsedPlan = plan.getPlan();
+                }
+
+                response.put("plan_id", plan.getPlan_id());
+                response.put("title", plan.getTitle());
+                response.put("plan", parsedPlan);
+                response.put("user_id", plan.getUser_id());
+                response.put("createdAt", plan.getCreatedAt());
+                response.put("updatedAt", plan.getUpdatedAt());
+                return response;
+            }).collect(Collectors.toList());
+
+            // Return 200 OK with the detailed list
+            return ResponseEntity.ok(responseList);
+        }
+    }
+
+
+
 
 
 
