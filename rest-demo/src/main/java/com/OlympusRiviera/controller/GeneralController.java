@@ -9,7 +9,6 @@ import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Event.EventService;
 import com.OlympusRiviera.service.Plan.PlanService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -199,38 +198,73 @@ public class GeneralController {
         }
     }
 
-    // Update a plan from user
+    // Update a plan from user(you can add entities in the plan by sending them in the body, ithout sending all the previous body)
     @PutMapping("/plan/{plan_id}")
     public ResponseEntity<?> updatePlanDetails(
             @PathVariable("plan_id") String plan_id,
-            @RequestBody Plan updatedPlan) {
+            @RequestBody Map<String, Object> updates) {
 
         // Fetch the existing plan from the service layer
         Plan existingPlan = planService.getPlan(plan_id);
 
         if (existingPlan != null) {
-            // Only update the fields that are provided in the request
-            if (updatedPlan.getTitle() != null) {
-                existingPlan.setTitle(updatedPlan.getTitle());
-            }
-
-            if (updatedPlan.getPlan() != null) {
-                // Parse the incoming 'plan' field correctly if it's a valid JSON string
-                String updatedPlanString = updatedPlan.getPlan();
-
-                try {
-                    // Ensure it's a valid JSON and handle it as needed
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    Object parsedPlan = objectMapper.readTree(updatedPlanString);  // Check if it's a valid JSON object/array
-                    existingPlan.setPlan(parsedPlan);  // Re-serialize it into a string to store
-                } catch (JsonProcessingException e) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("Invalid JSON format for plan field.");
+            // Update the title if provided
+            if (updates.containsKey("title")) {
+                String updatedTitle = (String) updates.get("title");
+                if (updatedTitle != null) {
+                    existingPlan.setTitle(updatedTitle);
                 }
             }
 
-            if (updatedPlan.getUser_id() != null) {
-                existingPlan.setUser_id(updatedPlan.getUser_id());
+            // Update the user_id if provided
+            if (updates.containsKey("user_id")) {
+                String updatedUserId = (String) updates.get("user_id");
+                if (updatedUserId != null) {
+                    existingPlan.setUser_id(updatedUserId);
+                }
+            }
+
+            // Handle the plan field if provided
+            if (updates.containsKey("plan")) {
+                Object planUpdates = updates.get("plan");
+
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+
+                    // Parse the existing plan into a list
+                    List<Map<String, Object>> existingPlanList = existingPlan.getPlanAsObject(List.class);
+
+                    // Check if the provided plan updates are a list or a single object
+                    if (planUpdates instanceof List) {
+                        List<Map<String, Object>> newPlanEntries = objectMapper.convertValue(planUpdates, List.class);
+
+                        for (Map<String, Object> newPlanEntry : newPlanEntries) {
+                            // Check if the entry already exists in the plan
+                            boolean exists = existingPlanList.stream().anyMatch(existingEntry ->
+                                    existingEntry.get("entity_id").equals(newPlanEntry.get("entity_id")));
+
+                            if (!exists) {
+                                existingPlanList.add(newPlanEntry);
+                            }
+                        }
+                    } else {
+                        Map<String, Object> newPlanEntry = objectMapper.convertValue(planUpdates, Map.class);
+
+                        // Check if the entry already exists in the plan
+                        boolean exists = existingPlanList.stream().anyMatch(existingEntry ->
+                                existingEntry.get("entity_id").equals(newPlanEntry.get("entity_id")));
+
+                        if (!exists) {
+                            existingPlanList.add(newPlanEntry);
+                        }
+                    }
+
+                    // Update the plan field with the merged list
+                    existingPlan.setPlan(existingPlanList);
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Invalid JSON format for plan field.");
+                }
             }
 
             // Update the 'updatedAt' field to the current time
@@ -241,12 +275,60 @@ public class GeneralController {
 
             // Response message
             String message = "Plan with id: " + existingPlan.getPlan_id() + " updated successfully";
+
             return ResponseEntity.status(HttpStatus.OK).body(message);
         } else {
             // Return 404 Not Found if the plan doesn't exist
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plan not found");
         }
     }
+
+    //you can delete destination from the plan by sending entities ids
+    @PutMapping("/plan/{plan_id}/remove")
+    public ResponseEntity<?> removePlanEntities(
+            @PathVariable("plan_id") String plan_id,
+            @RequestBody Map<String, Object> updates) {
+
+        // Fetch the existing plan from the service layer
+        Plan existingPlan = planService.getPlan(plan_id);
+
+        if (existingPlan != null) {
+            // Get the list of entity_ids to be removed from the request
+            if (updates.containsKey("entity_ids")) {
+                List<String> entityIdsToRemove = (List<String>) updates.get("entity_ids");
+
+                // Get the existing plan data as a list
+                List<Map<String, Object>> existingPlanList = existingPlan.getPlanAsObject(List.class);
+
+                // Filter out the entries that match the entity_ids to be removed
+                List<Map<String, Object>> updatedPlanList = existingPlanList.stream()
+                        .filter(entry -> !entityIdsToRemove.contains(entry.get("entity_id")))
+                        .collect(Collectors.toList());
+
+                // Update the plan field with the updated list
+                existingPlan.setPlan(updatedPlanList);
+
+                // Update the 'updatedAt' field to the current time
+                existingPlan.setUpdatedAt(new Date());
+
+                // Save the updated plan to the database
+                planService.updatePlan(existingPlan);
+
+                // Response message
+                String message = "Plan with id: " + existingPlan.getPlan_id() + " updated successfully by removing specified entities.";
+
+                return ResponseEntity.status(HttpStatus.OK).body(message);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No entity_ids provided for removal.");
+            }
+        } else {
+            // Return 404 Not Found if the plan doesn't exist
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plan not found");
+        }
+    }
+
+
+
 
 
     @DeleteMapping("/plan/{plan_id}")

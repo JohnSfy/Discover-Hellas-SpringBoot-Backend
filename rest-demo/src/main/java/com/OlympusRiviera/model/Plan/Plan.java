@@ -19,6 +19,7 @@ public class Plan {
     private String title;
 
     // Store the JSON as a String
+    @Column(columnDefinition = "TEXT") // Allow larger content
     private String plan;
 
     private String user_id;
