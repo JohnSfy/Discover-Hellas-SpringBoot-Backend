@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://olumpus-riviera-frontend.vercel.app")
 @RestController
 @RequestMapping("/api")
 public class ApprovalController {
