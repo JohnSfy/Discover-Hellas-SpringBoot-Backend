@@ -1,6 +1,6 @@
 package com.OlympusRiviera.service;
 
-import com.OlympusRiviera.model.User;
+import com.OlympusRiviera.model.User.User;
 
 import java.util.List;
 

@@ -1,15 +1,20 @@
-//package com.OlympusRiviera.service.impl;
-//
-//import com.OlympusRiviera.model.User;
-//import com.OlympusRiviera.repository.UserRepository;
-//import com.OlympusRiviera.service.UserService;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.List;
-//
-//@Service
-//public class UserServiceimpl implements UserService {
-//
+package com.OlympusRiviera.service.impl;
+
+import com.OlympusRiviera.repository.User.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserServiceimpl implements UserDetailsService {
+
+    private final UserRepository repository
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
+    }
+
 //    UserRepository userRepository;
 //
 //    public UserServiceimpl(UserRepository userRepository) {
@@ -45,4 +50,4 @@
 //    public List<User> getAllUsers() {
 //        return userRepository.findAll();
 //    }
-//}
+}

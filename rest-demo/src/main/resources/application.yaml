@@ -1,20 +1,20 @@
-##//for the connection with mysql
+###//for the connection with mysql
+##spring:
+##  datasource:
+##    url: jdbc:mysql://localhost:3306/olympus_riviera?useSSL-false
+##    username: root
+##    password: 1234
 #spring:
 #  datasource:
-#    url: jdbc:mysql://localhost:3306/olympus_riviera?useSSL-false
-#    username: root
-#    password: 1234
-spring:
-  datasource:
 #      url: jdbc:postgresql://localhost:5432/api?ssl=false
 #      username: postgres
 #      password: olympus_riviera
-#      url: jdbc:postgresql://ep-divine-violet-a21u7316.eu-central-1.aws.neon.tech/olympus_riviera?user=olympus_riviera_owner&password=wHa8KvuZNf7e&sslmode=require
-
-    url: jdbc:postgresql://195.251.210.147:8881/postgres?ssl=false
-    username: admin
-    password: 9GKSM9wD356VfQ6
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+##      url: jdbc:postgresql://ep-divine-violet-a21u7316.eu-central-1.aws.neon.tech/olympus_riviera?user=olympus_riviera_owner&password=wHa8KvuZNf7e&sslmode=require
+#
+##    url: jdbc:postgresql://195.251.210.147:8881/postgres?ssl=false
+##    username: admin
+##    password: 9GKSM9wD356VfQ6
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
