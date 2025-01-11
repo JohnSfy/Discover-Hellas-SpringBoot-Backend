@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name="User")
+@Table(name="users")
 @Data
 public class User implements UserDetails {
 
     @Id
     private String user_id;
-    private String google_id;
+    private String googleid;
     private String username;
     private String firstname;
     private String lastname;
@@ -34,7 +34,7 @@ public class User implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    public User(String user_id, String username, String firstname, String lastname, String email, Role role, String password, String google_id) {
+    public User(String user_id, String username, String firstname, String lastname, String email, Role role, String password, String googleid) {
         this.user_id = generateId(); //random id for user
         this.username = username;
         this.email = email;
@@ -42,7 +42,7 @@ public class User implements UserDetails {
         this.lastname = lastname;
         this.role = role;
         this.password = password;
-        this.google_id = google_id;
+        this.googleid = googleid;
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }

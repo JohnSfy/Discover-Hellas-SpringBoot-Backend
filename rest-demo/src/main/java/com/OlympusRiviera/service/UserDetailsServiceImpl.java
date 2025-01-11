@@ -20,4 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return repository.findByUsername(username)
                 .orElseThrow(()->new UsernameNotFoundException("User Not Found"));
     }
+
+    // Load user by google_id instead of username
+    public UserDetails loadUserByGoogleId(String google_id) throws UsernameNotFoundException {
+        return repository.findByGoogleid(google_id)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with google_id: " + google_id));
+    }
 }

@@ -22,9 +22,13 @@ public class JwtService {
     }
 
     public boolean isValid(String token, UserDetails user) {
-        String username = extractUsername(token);
-        return (username.equals(user.getUsername())) && isTokenExpired(token);
+        String usernameOrGoogleId = extractUsername(token); // This will extract either username or google_id from the token
+
+        // If the extracted value is equal to either username or google_id of the user, and the token is not expired, it is valid
+        return (usernameOrGoogleId.equals(user.getUsername()) || usernameOrGoogleId.equals(user.getgoogleid))
+                && !isTokenExpired(token); // Ensure token is not expired
     }
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -48,12 +52,18 @@ public class JwtService {
     }
 
     public String generateToken(User user) {
+        // Use the username if it's not empty, otherwise fall back to google_id
+        String subject = (user.getUsername() != null && !user.getUsername().isEmpty())
+                ? user.getUsername()
+                : user.getGoogleid();
+
+        // Generate the JWT token
         String token = Jwts.builder()
-                .subject(user.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) //24 hours
-                .signWith(getSigninKey())
-                .compact();
+                .subject(subject) // Set the subject to username or google_id
+                .issuedAt(new Date(System.currentTimeMillis())) // Set the issued time
+                .expiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // 24 hours expiration
+                .signWith(getSigninKey()) // Sign the token
+                .compact(); // Build the token
 
         return token;
     }
