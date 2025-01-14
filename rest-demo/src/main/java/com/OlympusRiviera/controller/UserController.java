@@ -119,7 +119,7 @@ public class UserController {
 
         try {
             // Step 1: Extract Google JWT token from request
-            String googleJwtToken = (String) requestBody.get("jwtToken");
+            String googleJwtToken = (String) requestBody.get("jwt_token");
             if (googleJwtToken == null || googleJwtToken.trim().isEmpty()) {
                 response.put("error", "Google JWT token is required.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.writeValueAsString(response));
