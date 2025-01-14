@@ -14,10 +14,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8080") // Allow only localhost on port 3000 (or the port your frontend runs on)
+                        .allowedOriginPatterns("*")  // Allows all origins using patterns
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true); // Allow cookies and credentials
+                        .allowedHeaders("*") ; // Allow all headers
+                         // Allow credentials (cookies, authorization headers, etc.)
             }
         };
     }

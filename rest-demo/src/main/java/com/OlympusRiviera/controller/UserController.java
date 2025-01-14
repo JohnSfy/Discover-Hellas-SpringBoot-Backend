@@ -18,7 +18,7 @@ import static com.OlympusRiviera.service.JWT.verifyAndDecodeGoogleJwt.verifyAndD
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     UserService userService;
@@ -31,14 +31,14 @@ public class UserController {
 
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
         Map<String, Object> response = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             // Step 1: Extract Google JWT token from request
-            String googleJwtToken = (String) requestBody.get("jwtToken");
+            String googleJwtToken = (String) requestBody.get("jwt_token");
             String role = (String) requestBody.get("role");
             if (googleJwtToken == null || googleJwtToken.trim().isEmpty()) {
                 response.put("error", "Google JWT token is required.");
@@ -112,7 +112,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
         Map<String, Object> response = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
