@@ -2,28 +2,24 @@ package com.OlympusRiviera.model.User;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name="users")
 @Data
-public class User implements UserDetails {
+public class User {
 
     @Id
     private String user_id;
-    private String googleid;
+    private String googleId;
     private String username;
     private String firstname;
     private String lastname;
     private String password;
     private String email;
+    private String photo;
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
@@ -34,7 +30,7 @@ public class User implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    public User(String user_id, String username, String firstname, String lastname, String email, Role role, String password, String googleid) {
+    public User(String user_id, String username, String firstname, String lastname, String email, Role role, String password, String googleId, String photo) {
         this.user_id = generateId(); //random id for user
         this.username = username;
         this.email = email;
@@ -42,7 +38,8 @@ public class User implements UserDetails {
         this.lastname = lastname;
         this.role = role;
         this.password = password;
-        this.googleid = googleid;
+        this.googleId = googleId;
+        this.photo = photo;
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
@@ -71,28 +68,5 @@ public class User implements UserDetails {
         this.updatedAt = new Date(); // Update the updatedAt field
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }
