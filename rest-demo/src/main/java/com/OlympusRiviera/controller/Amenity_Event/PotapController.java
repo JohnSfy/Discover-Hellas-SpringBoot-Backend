@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "https://olumpus-riviera-frontend.vercel.app")
 @RestController
 @RequestMapping("/api/admin")
 public class PotapController {

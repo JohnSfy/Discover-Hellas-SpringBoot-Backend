@@ -17,7 +17,7 @@ import java.util.Optional;
 
 import static com.OlympusRiviera.service.JWT.verifyAndDecodeGoogleJwt.verifyAndDecodeGoogleJwt;
 
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {

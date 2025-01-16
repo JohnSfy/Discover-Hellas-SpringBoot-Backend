@@ -14,10 +14,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOriginPatterns("http://localhost:5173/")  // Allows all origins using patterns
+                        .allowedOriginPatterns("http://localhost:5173", "https://olympus-riviera-frontend.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*") ; // Allow all headers
-                         // Allow credentials (cookies, authorization headers, etc.)
+                        .allowedHeaders("*") // Allow all headers
+                        .allowCredentials(true); // Allow credentials (cookies, etc.)
             }
         };
     }
