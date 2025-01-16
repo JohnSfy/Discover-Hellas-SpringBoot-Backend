@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/destination/category")
+@RequestMapping("/api")
 public class DestinationCategoryController {
 
     private final DestinationCategoryService destinationCategoryService;
@@ -23,7 +23,7 @@ public class DestinationCategoryController {
 
     // Get details of a specific destination categories by ID
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/{category_id}")
+    @GetMapping("/admin/destination/category/{category_id}")
     public ResponseEntity<DestinationCategory> getDestinationCategoryDetails(@PathVariable("category_id") String category_id) {
         DestinationCategory destinationCategoryDetails = destinationCategoryService.getDestinationCategory(category_id);
         if (destinationCategoryDetails != null) {
@@ -37,8 +37,7 @@ public class DestinationCategoryController {
 
     // Get all destination details
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/get/all")
+    @GetMapping("/destination/category/get/all")
     public ResponseEntity<List<DestinationCategory>> getAllDestinationCategoryDetails() {
         List<DestinationCategory> destinationCategories = destinationCategoryService.getAllDestinationCategories();
         return ResponseEntity.ok(destinationCategories); // Return 200 OK with the list of destinations
@@ -47,7 +46,7 @@ public class DestinationCategoryController {
     // Create a new destination
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/create")
+    @PostMapping("/admin/destination/category/create")
     public ResponseEntity<String> createDestinationDetails(@RequestBody DestinationCategory destinationCategory) {
         destinationCategoryService.createDestinationCategory(destinationCategory);
         String message = "Destination Category with id: " + destinationCategory.getCategory_id() + " Created Successfully";
@@ -57,7 +56,7 @@ public class DestinationCategoryController {
     // Update an existing destination by ID
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/{category_id}")
+    @PutMapping("/admin/destination/category/{category_id}")
     public ResponseEntity<String> updateDestinationCategory(@PathVariable String category_id, @RequestBody DestinationCategory destinationCategory) {
         destinationCategory.setCategory_id(category_id);
         destinationCategoryService.updateDestinationCategory(destinationCategory);
@@ -68,7 +67,7 @@ public class DestinationCategoryController {
     // Delete a destination by ID
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/{category_id}")
+    @DeleteMapping("/admin/destination/category/{category_id}")
     public ResponseEntity<String> deleteDestinationCategory(@PathVariable String category_id) {
         destinationCategoryService.deleteDestinationCategory(category_id);
         String message = "Destination Category with id: " + category_id + " Deleted Successfully";
