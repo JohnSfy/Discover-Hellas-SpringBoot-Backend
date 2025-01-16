@@ -125,7 +125,15 @@ public class SecurityConfig {
         // Configure the HTTP Security
         http.csrf(csrf -> csrf.disable()) // Disable CSRF for stateless JWT
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/api/user/register", "/api/user/login").permitAll() // Public APIs
+                        // Public APIs
+                        .requestMatchers(
+                                "/api/event/**",
+                                "/api/plan/**",
+                                "/api/amenity/**",
+                                "/api/destination/**",
+                                "/api/user/register",
+                                "/api/user/login"
+                        ).permitAll() // Open access to these APIs
                         // Restrict access to Admin APIs
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Restrict access to Provider APIs

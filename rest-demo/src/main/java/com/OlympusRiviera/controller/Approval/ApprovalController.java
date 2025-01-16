@@ -9,6 +9,7 @@ import com.OlympusRiviera.service.Approval.ApprovalService;
 import com.OlympusRiviera.service.Event.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class ApprovalController {
 
 
     //Ποταπ getting all pending Create amenity requests
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/amenity/add-request/get/all")
     public ResponseEntity<Object> getAllCreateAmenityApprovals() {
         // Fetch all approvals
@@ -56,6 +58,7 @@ public class ApprovalController {
     }
 
     //Get all Update Requests
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/amenity/edit-request/get/all")
     public ResponseEntity<Object> getAllUpdateAmenityApprovals() {
         // Fetch all approvals
@@ -78,7 +81,9 @@ public class ApprovalController {
         }
     }
 
+
     //Get a specific Create request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/amenity/add-request/get/{amenity_id}")
     public ResponseEntity<Object> getCreateAmenityApprovalDetails(@PathVariable("amenity_id") String amenity_id) {
         // Fetch all approvals
@@ -104,6 +109,7 @@ public class ApprovalController {
     }
 
     //Get a specific Update Request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/amenity/edit-request/get/{amenity_id}")
     public ResponseEntity<Object> getUpdateAmenityApprovalDetails(@PathVariable("amenity_id") String amenity_id) {
         // Fetch all approvals
@@ -129,6 +135,7 @@ public class ApprovalController {
     }
 
     //Update the status of Create Request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/amenity/add-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
     public ResponseEntity<String> updateCreateAmenityApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
         // Fetch the approval request by amenity_id
@@ -157,6 +164,7 @@ public class ApprovalController {
     }
 
     //Update status of Edit request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/amenity/edit-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
     public ResponseEntity<String> updateEditAmenityApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
         // Fetch the approval request by amenity_id
@@ -196,6 +204,7 @@ public class ApprovalController {
 
 
     //Ποταπ getting all pending Create amenity requests
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/event/add-request/get/all")
     public ResponseEntity<Object> getAllCreateEventApprovals() {
         // Fetch all approvals
@@ -219,6 +228,7 @@ public class ApprovalController {
     }
 
     //Get all Update Requests
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/event/edit-request/get/all")
     public ResponseEntity<Object> getAllUpdateEventApprovals() {
         // Fetch all approvals
@@ -242,6 +252,7 @@ public class ApprovalController {
     }
 
     //Get a specific Create request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/event/add-request/get/{event_id}")
     public ResponseEntity<Object> getCreateEventApprovalDetails(@PathVariable("event_id") String event_id) {
         // Fetch all approvals
@@ -267,6 +278,7 @@ public class ApprovalController {
     }
 
     //Get a specific Update Request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/event/edit-request/get/{event_id}")
     public ResponseEntity<Object> getUpdateEventApprovalDetails(@PathVariable("event_id") String event_id) {
         // Fetch all approvals
@@ -292,6 +304,7 @@ public class ApprovalController {
     }
 
     //Update the status of Create Request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/event/add-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
     public ResponseEntity<String> updateCreateEventApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
 
@@ -320,6 +333,7 @@ public class ApprovalController {
     }
 
     //Update status of Edit request
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/event/edit-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
     public ResponseEntity<String> updateEditEventApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
         // Fetch the approval request by amenity_id
@@ -362,6 +376,7 @@ public class ApprovalController {
 
     // Get a pending approval to Edit it again?!
 // If this returns 200, you can understand that the event with id event_id is Edited and pending for approval
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @GetMapping("/provider/approval/event/get/{event_id}")
     public ResponseEntity<Object> getApprovalByEventId(@PathVariable("event_id") String event_id) {
         // Fetch all approvals
@@ -389,6 +404,8 @@ public class ApprovalController {
     }
 
     // Get all approvals (approved/pending/rejected) from a specific provider with ?provider_id=id
+
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @GetMapping("/provider/approval/event/get/all")
     public ResponseEntity<Object> getAllEventApprovalsForProvider(@RequestParam("provider_id") String provider_id) {
         // Fetch all approvals
@@ -415,6 +432,8 @@ public class ApprovalController {
 
     // Get a pending approval to Edit it again?!
 // If this returns 200, you can understand that the amenity with id amenity_id is Edited and pending for approval
+
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @GetMapping("/provider/approval/amenity/get/{amenity_id}")
     public ResponseEntity<Object> getApprovalByAmenityId(@PathVariable("amenity_id") String amenity_id) {
         // Fetch all approvals
@@ -442,6 +461,8 @@ public class ApprovalController {
     }
 
     // Get all approvals (approved/pending/rejected) from a specific provider with ?provider_id=id
+
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @GetMapping("/provider/approval/amenity/get/all")
     public ResponseEntity<Object> getAllAmenitiesApprovalsForProvider(@RequestParam("provider_id") String provider_id) {
         // Fetch all approvals

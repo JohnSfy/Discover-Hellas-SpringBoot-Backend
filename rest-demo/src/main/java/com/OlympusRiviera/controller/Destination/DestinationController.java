@@ -6,6 +6,7 @@ import com.OlympusRiviera.service.Destination.DestinationService;
 import com.OlympusRiviera.service.Destination.DestinationStatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +44,8 @@ public class DestinationController {
     }
 
     // Create a new destination from POTAP
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/destination/create")
     public ResponseEntity<String> createDestinationDetails(@RequestBody Destination destination) {
         // Save the destination
@@ -66,6 +69,8 @@ public class DestinationController {
 
 
     // Update an existing destination by ID
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/destination/{destination_id}")
     public ResponseEntity<String> updateDestination(@PathVariable String destination_id, @RequestBody Destination destination) {
         destination.setDestination_id(destination_id);
@@ -75,6 +80,8 @@ public class DestinationController {
     }
 
     // Delete a destination by ID
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/destination/{destination_id}")
     public ResponseEntity<String> deleteDestination(@PathVariable String destination_id) {
         destinationService.deleteDestination(destination_id);

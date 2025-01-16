@@ -4,6 +4,7 @@ import com.OlympusRiviera.model.Destination.DestinationStat;
 import com.OlympusRiviera.service.Destination.DestinationStatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class DestinationStatController {
 
 
     //getStats for the specified destination, if the dest stat is null, informs
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{destination_id}")
     public ResponseEntity<?> getStatsByDestinationId(@PathVariable("destination_id") String destination_id) {
         // Fetch all stats
@@ -43,6 +46,8 @@ public class DestinationStatController {
     }
 
     //get all stats for destinations
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/get/all")
     public ResponseEntity<List<DestinationStat>> getAllDestinationDetails() {
         List<DestinationStat> destinationStats = destinationStatService.getAllDestinationStats();
@@ -52,6 +57,8 @@ public class DestinationStatController {
 
     //checks if there is a statistic for a destination and if exist then not allowing to create
     //another one
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<String> createDestinationStat(@RequestBody DestinationStat destinationStat) {
         // Check if a record with the same destination_id already exists
@@ -74,6 +81,8 @@ public class DestinationStatController {
 
 
     //update stats for specified destination
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{destination_id}")
     public ResponseEntity<String> updateDestinationStat(
             @PathVariable("destination_id") String destination_id,
@@ -110,6 +119,8 @@ public class DestinationStatController {
     }
 
 
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{destination_id}")
     public ResponseEntity<String> deleteDestinationStat(@PathVariable String destination_id) {
         // Fetch all stats
