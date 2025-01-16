@@ -11,6 +11,7 @@ import com.OlympusRiviera.service.Event.EventCategoryService;
 import com.OlympusRiviera.service.Event.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,13 +34,15 @@ public class PotapController {
     }
 
     //----------------------------Amenity----------------------------------------------------------
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/amenity/get/all")
     public ResponseEntity<List<Amenity>> getAllAmenityDetails() {
         List<Amenity> amenities = amenityService.getAllAmenities();
         return ResponseEntity.ok(amenities); // Return 200 OK with the list of destinations
     }
 
-    // Create a new amenity from potap with status approved
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")// Create a new amenity from potap with status approved
     @PostMapping("/amenity/create")
     public ResponseEntity<String> createAmenityDetails(@RequestBody Amenity amenity) {
         amenity.setStatus("APPROVED");
@@ -47,7 +50,7 @@ public class PotapController {
         String message = "Amenity with id: " + amenity.getAmenity_id() + " Created Successfully from ΠΟΤΑΠ";
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/amenity/edit/{amenity_id}")
     public ResponseEntity<String> updateAmenity(@PathVariable String amenity_id, @RequestBody Amenity amenity) {
         amenity.setAmenity_id(amenity_id);
@@ -57,6 +60,7 @@ public class PotapController {
         return ResponseEntity.ok(message); // Return 200 OK
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/amenity/delete/{amenity_id}")
     public ResponseEntity<String> deleteDestination(@PathVariable String amenity_id) {
         amenityService.deleteAmenity(amenity_id);
@@ -68,14 +72,14 @@ public class PotapController {
     //-----------------------Amenity Category Control-----------------------------------
 
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/amenity/category/create")
     public ResponseEntity<String> createAmenityDetails(@RequestBody AmenityCategory amenityCategory) {
         amenityCategoryService.createAmenityCategory(amenityCategory);
         String message = "Amenity Category with id: " + amenityCategory.getCategory_id() + " Created Successfully";
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/amenity/category/{category_id}")
     public ResponseEntity<String> updateAmenityCategory(@PathVariable String category_id, @RequestBody AmenityCategory amenityCategory) {
         amenityCategory.setCategory_id(category_id);
@@ -84,6 +88,7 @@ public class PotapController {
         return ResponseEntity.ok(message); // Return 200 OK
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/amenity/category/{category_id}")
     public ResponseEntity<String> deleteAmenityCategory(@PathVariable String category_id) {
         amenityCategoryService.deleteAmenityCategory(category_id);
@@ -97,7 +102,7 @@ public class PotapController {
     //-----------------------------------Event------------------------------------------------------
     //----------------------------------------------------------------------------------------------
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/event/get/all")
     public ResponseEntity<List<Event>> getAllEventDetails() {
         List<Event> events = eventService.getAllEvents();
@@ -105,6 +110,7 @@ public class PotapController {
     }
 
     // Create a new event from potap with status approved
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/event/create")
     public ResponseEntity<String> createEventDetails(@RequestBody Event event) {
         event.setStatus("APPROVED");
@@ -112,7 +118,7 @@ public class PotapController {
         String message = "Event with id: " + event.getEvent_id() + " Created Successfully from ΠΟΤΑΠ";
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/event/edit/{event_id}")
     public ResponseEntity<String> updateEvent(@PathVariable String event_id, @RequestBody Event event) {
         event.setEvent_id(event_id);
@@ -121,7 +127,7 @@ public class PotapController {
         String message = "Amenity with id: " + event.getEvent_id() + " Updated Successfully";
         return ResponseEntity.ok(message); // Return 200 OK
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/event/delete/{event_id}")
     public ResponseEntity<String> deleteEvent(@PathVariable String event_id) {
         eventService.deleteEvent(event_id);
@@ -131,7 +137,7 @@ public class PotapController {
 
     //-----------------------Event Category Control-----------------------------------
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/event/category/create")
     public ResponseEntity<String> createEventDetails(@RequestBody EventCategory eventCategory) {
         eventCategoryService.createEventCategory(eventCategory);
@@ -139,6 +145,7 @@ public class PotapController {
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/event/category/{category_id}")
     public ResponseEntity<String> updateEventCategory(@PathVariable String category_id, @RequestBody EventCategory eventCategory) {
         eventCategory.setCategory_id(category_id);
@@ -147,6 +154,7 @@ public class PotapController {
         return ResponseEntity.ok(message); // Return 200 OK
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/event/category/{category_id}")
     public ResponseEntity<String> deleteEventCategory(@PathVariable String category_id) {
         eventCategoryService.deleteEventCategory(category_id);

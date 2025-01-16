@@ -1,6 +1,5 @@
 package com.OlympusRiviera.controller;
 
-
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Amenity.AmenityCategory;
 import com.OlympusRiviera.model.Event.Event;
@@ -38,6 +37,7 @@ public class GeneralController {
     }
 
     //-----------------------Amenity--------------------------------------------------
+
 
     @GetMapping("/amenity/get/all")
     public ResponseEntity<List<Amenity>> getAllApprovedAmenities() {

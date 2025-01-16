@@ -9,6 +9,7 @@ import com.OlympusRiviera.service.Approval.ApprovalService;
 import com.OlympusRiviera.service.Event.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "https://olumpus-riviera-frontend.vercel.app")
@@ -30,6 +31,8 @@ public class ProviderController {
     //--------------------------------Event Controller----------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------
     //Create request for a event entry and waiting potap to approve
+
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @PostMapping("/event/add-request/create")
         public ResponseEntity<String> createEventDetails(@RequestBody Event event) {
         event.setStatus("PENDING");
@@ -55,7 +58,7 @@ public class ProviderController {
         // Return a response with the success message
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
-
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @PutMapping("/event/edit-request/create/{event_id}")
     public ResponseEntity<String> updateOrCreatePendingEvent(@PathVariable String event_id, @RequestBody Event updatedEvent) {
         // Fetch the existing event
@@ -101,7 +104,7 @@ public class ProviderController {
     }
 
 
-
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @DeleteMapping("/event/delete/{event_id}")
     public ResponseEntity<String> deleteEvent(@PathVariable String event_id) {
         eventService.deleteEvent(event_id);
@@ -115,6 +118,7 @@ public class ProviderController {
     //---------------------------------Amenity Controller--------------------------------------------------
 
     //Create request for a amenity entry and waiting potap to approve
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @PostMapping("/amenity/add-request/create")
     public ResponseEntity<String> createAmenityDetails(@RequestBody Amenity amenity) {
         amenity.setStatus("PENDING");
@@ -141,6 +145,7 @@ public class ProviderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @PutMapping("/amenity/edit-request/create/{amenity_id}")
     public ResponseEntity<String> updateOrCreatePendingAmenity(@PathVariable String amenity_id, @RequestBody Amenity updatedAmenity) {
         // Fetch the existing amenity
@@ -183,7 +188,7 @@ public class ProviderController {
     }
 
 
-
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @DeleteMapping("/amenity/delete/{amenity_id}")
     public ResponseEntity<String> deleteDestination(@PathVariable String amenity_id) {
         amenityService.deleteAmenity(amenity_id);

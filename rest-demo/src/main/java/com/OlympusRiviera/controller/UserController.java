@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -161,5 +162,14 @@ public class UserController {
             response.put("error", "An unexpected error occurred.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(objectMapper.writeValueAsString(response));
         }
+    }
+
+    @GetMapping("/test")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Map<String, String>> adminTest() {
+        // Example response for testing purposes
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Hello, Admin! This is a secured API.");
+        return ResponseEntity.ok(response);
     }
 }
