@@ -132,7 +132,8 @@ public class SecurityConfig {
                                 "/api/amenity/**",
                                 "/api/destination/**",
                                 "/api/user/register",
-                                "/api/user/login"
+                                "/api/user/login",
+                                "/api/feedback/**"
                         ).permitAll() // Open access to these APIs
                         // Restrict access to Admin APIs
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

@@ -368,6 +368,51 @@ public class ApprovalController {
     }
 
 
+    //------------------------------Reviews------------------------------
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/approval/review/get/{approval_id}")
+    public ResponseEntity<Object> getReviewDetails(@PathVariable("approval_id") String approval_id) {
+        // Fetch all approvals
+        Approval approval = approvalService.getApproval(approval_id);
+        if (approval == null) {
+            // Return 404 Not Found if the approval request does not exist
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Approval request not found for ID: " + approval_id);
+        }
+        // Return 200 OK with the approval request details
+        return ResponseEntity.ok(approval);
+
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/approval/review/get/all")
+    public ResponseEntity<Object> getAllReviews() {
+
+        // Fetch all approvals
+        List<Approval> allApprovals = approvalService.getAllApprovals();
+
+        // Filter approvals by entity_type = "Event", status = "PENDING", and approval_type = "Create"
+        List<Approval> matchingApprovals = allApprovals.stream()
+                .filter(approval -> "Review".equals(approval.getEntity_type())
+                        && "PENDING".equals(approval.getStatus())
+                        && "Create".equals(approval.getApproval_type()))
+                .collect(Collectors.toList());
+
+        if (matchingApprovals.isEmpty()) {
+            // Return 404 if no approvals are found with a custom message
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No matching Review approvals found with status 'PENDING' and approval type 'Create'.");
+        } else {
+            // Return 200 OK with the filtered list of Event approvals
+            return ResponseEntity.ok(matchingApprovals);
+        }
+
+
+    }
+
+
+
 
     //-----------------------------------Provider-----------------------------------------------------
     //------------------------------------------------------------------------------------------------
@@ -414,7 +459,7 @@ public class ApprovalController {
         // Filter approvals by provider_id and entity_type "Event"
         List<Approval> providerApprovals = allApprovals.stream()
                 .filter(approval -> "Event".equals(approval.getEntity_type()) // Ensure entity_type is "Event"
-                        && provider_id.equals(approval.getProvider_id())) // Match provider_id
+                        && provider_id.equals(approval.getUser_id())) // Match provider_id
                 .collect(Collectors.toList());
 
         if (providerApprovals.isEmpty()) {
@@ -471,7 +516,7 @@ public class ApprovalController {
         // Filter approvals by provider_id and entity_type "Amenity"
         List<Approval> providerApprovals = allApprovals.stream()
                 .filter(approval -> "Amenity".equals(approval.getEntity_type()) // Ensure entity_type is "Amenity"
-                        && provider_id.equals(approval.getProvider_id())) // Match provider_id
+                        && provider_id.equals(approval.getUser_id())) // Match provider_id
                 .collect(Collectors.toList());
 
         if (providerApprovals.isEmpty()) {
@@ -483,6 +528,9 @@ public class ApprovalController {
             return ResponseEntity.ok(providerApprovals);
         }
     }
+
+
+
 
 
 

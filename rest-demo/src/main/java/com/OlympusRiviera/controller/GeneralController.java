@@ -2,12 +2,16 @@ package com.OlympusRiviera.controller;
 
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Amenity.AmenityCategory;
+import com.OlympusRiviera.model.Approval.Approval;
 import com.OlympusRiviera.model.Event.Event;
 import com.OlympusRiviera.model.Plan.Plan;
+import com.OlympusRiviera.model.Review.Review;
 import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
+import com.OlympusRiviera.service.Approval.ApprovalService;
 import com.OlympusRiviera.service.Event.EventService;
 import com.OlympusRiviera.service.Plan.PlanService;
+import com.OlympusRiviera.service.Review.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +32,16 @@ public class GeneralController {
     private final AmenityCategoryService amenityCategoryService;
     private final EventService eventService;
     private final PlanService planService;
+    private final ReviewService reviewService;
+    private final ApprovalService approvalService;
 
-    public GeneralController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, PlanService planService) {
+    public GeneralController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, PlanService planService, ReviewService reviewService, ApprovalService approvalService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
         this.planService = planService;
+        this.reviewService = reviewService;
+        this.approvalService = approvalService;
     }
 
     //-----------------------Amenity--------------------------------------------------
@@ -397,6 +405,30 @@ public class GeneralController {
             // Return 200 OK with the detailed list
             return ResponseEntity.ok(responseList);
         }
+    }
+
+
+
+    //----------------------------Review Destination / Activity------------------------
+
+    @PostMapping("/feedback/evaluation/create")
+    public ResponseEntity<?> createEntityReview(@RequestBody Review review) {
+        review.setStatus("PENDING");
+        reviewService.createReview(review);
+        // Create a new Approval record
+        Approval approval = new Approval();
+        approval.setEntity_id(review.getEntity_id());
+        approval.setEntity_type("Review");
+        approval.setApproval_type("Create");
+        approval.setStatus("PENDING");
+        approval.setUser_id(review.getUser_id());
+
+        approvalService.createApproval(approval);
+
+        // Create a success message
+        String message = "Review with id: " + review.getReview_id() + " created successfully and pending approval " +"with id "+ approval.getApproval_id();
+        // Response message
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
 

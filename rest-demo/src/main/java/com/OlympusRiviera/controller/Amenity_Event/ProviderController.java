@@ -46,7 +46,7 @@ public class ProviderController {
         approval.setEntity_type("Event"); // Since it's an Amenity
         approval.setApproval_type("Create"); // This is a "Create" approval type
         approval.setStatus("PENDING"); // Status is "PENDING" since it is awaiting approval
-        approval.setProvider_id(event.getOrganizer_id()); // Assuming this is available in Amenity
+        approval.setUser_id(event.getOrganizer_id()); // Assuming this is available in Amenity
         approval.setEmployee_id("employee_id_here"); // This might come from your session, token, etc.
 
         // Save the Approval object (assuming ApprovalService has a method to handle saving)
@@ -94,7 +94,7 @@ public class ProviderController {
         approval.setEntity_type("Event");
         approval.setApproval_type("Edit"); // Indicating this is for an edit operation
         approval.setStatus("PENDING");
-        approval.setProvider_id(newEvent.getOrganizer_id());
+        approval.setUser_id(newEvent.getOrganizer_id());
         approval.setEmployee_id("employee_id_here"); // Replace as needed
         approvalService.createApproval(approval);
 
@@ -132,7 +132,7 @@ public class ProviderController {
         approval.setEntity_type("Amenity"); // Since it's an Amenity
         approval.setApproval_type("Create"); // This is a "Create" approval type
         approval.setStatus("PENDING"); // Status is "PENDING" since it is awaiting approval
-        approval.setProvider_id(amenity.getProvider_id()); // Assuming this is available in Amenity
+        approval.setUser_id(amenity.getProvider_id()); // Assuming this is available in Amenity
         approval.setEmployee_id("employee_id_here"); // This might come from your session, token, etc.
 
         // Save the Approval object (assuming ApprovalService has a method to handle saving)
@@ -178,7 +178,7 @@ public class ProviderController {
         approval.setEntity_type("Amenity");
         approval.setApproval_type("Edit"); // Indicating this is for an edit operation
         approval.setStatus("PENDING");
-        approval.setProvider_id(newAmenity.getProvider_id());
+        approval.setUser_id(newAmenity.getProvider_id());
         approval.setEmployee_id("employee_id_here"); // Replace as needed
         approvalService.createApproval(approval);
 
