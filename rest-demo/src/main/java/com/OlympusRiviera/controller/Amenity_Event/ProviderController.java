@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = {"http://localhost:8080", "https://localhost:5173"})
 @RestController
 @RequestMapping("/api/provider")
 public class ProviderController {
