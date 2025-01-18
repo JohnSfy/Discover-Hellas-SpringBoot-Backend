@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = {"http://localhost:8080", "https://localhost:5173"})
 @RestController
 @RequestMapping("/api/provider")
@@ -113,6 +116,30 @@ public class ProviderController {
     }
 
 
+    //Get all Events for specific provider with ?provider_id = test
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
+    @GetMapping("/event/get/all")
+    public ResponseEntity<?> getAllEventsForProvider(@RequestParam String provider_id) {
+        // Fetch all events
+        List<Event> allEvents = eventService.getAllEvents();
+
+        // Filter events by provider_id
+        List<Event> filteredEvents = allEvents.stream()
+                .filter(event -> provider_id.equals(event.getOrganizer_id()))
+                .collect(Collectors.toList());
+
+        // Check if any events were found for the given provider_id
+        if (filteredEvents.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No events found for provider with id: " + provider_id);
+        }
+
+        // Return the filtered events
+        return ResponseEntity.ok(filteredEvents);
+    }
+
+
+
 
 
     //---------------------------------Amenity Controller--------------------------------------------------
@@ -195,5 +222,28 @@ public class ProviderController {
         String message = "Amenity with id: " + amenity_id + " deleted successfully from Provider";
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
+
+    //get all amenities for specific provider_id - organizer with amenity/get/all?provider_id = somethng
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
+    @GetMapping("/amenity/get/all")
+    public ResponseEntity<?> getAllAmenitiesForProvider(@RequestParam String provider_id) {
+        // Fetch all amenities
+        List<Amenity> allAmenities = amenityService.getAllAmenities();
+
+        // Filter amenities by provider_id
+        List<Amenity> filteredAmenities = allAmenities.stream()
+                .filter(amenity -> provider_id.equals(amenity.getProvider_id()))
+                .collect(Collectors.toList());
+
+        // Check if any amenities were found for the given provider_id
+        if (filteredAmenities.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No amenities found for provider with id: " + provider_id);
+        }
+
+        // Return the filtered amenities
+        return ResponseEntity.ok(filteredAmenities);
+    }
+
 
 }
