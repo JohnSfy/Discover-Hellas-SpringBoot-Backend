@@ -439,7 +439,7 @@ public class GeneralController {
 
     //get all stats for destinations
 
-    @GetMapping("destination/statistics/get/all")
+    @GetMapping("/destination/statistics/get/all")
     public ResponseEntity<List<DestinationStat>> getAllDestinationDetails() {
         List<DestinationStat> destinationStats = destinationStatService.getAllDestinationStats();
         return ResponseEntity.ok(destinationStats); // Return 200 OK with the list of destinations
