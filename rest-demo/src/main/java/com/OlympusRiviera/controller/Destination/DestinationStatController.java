@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/admin/statistics")
+@RequestMapping("/api")
 public class DestinationStatController {
 
     private final DestinationStatService destinationStatService;
@@ -24,7 +24,7 @@ public class DestinationStatController {
     //getStats for the specified destination, if the dest stat is null, informs
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/{destination_id}")
+    @GetMapping("/admin/statistics/{destination_id}")
     public ResponseEntity<?> getStatsByDestinationId(@PathVariable("destination_id") String destination_id) {
         // Fetch all stats
         List<DestinationStat> allStats = destinationStatService.getAllDestinationStats();
@@ -58,7 +58,7 @@ public class DestinationStatController {
     //another one
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/create")
+    @PostMapping("/admin/statistics/create")
     public ResponseEntity<String> createDestinationStat(@RequestBody DestinationStat destinationStat) {
         // Check if a record with the same destination_id already exists
         List<DestinationStat> existingStats = destinationStatService.getAllDestinationStats()
@@ -82,7 +82,7 @@ public class DestinationStatController {
     //update stats for specified destination
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/{destination_id}")
+    @PutMapping("/admin/statistics/{destination_id}")
     public ResponseEntity<String> updateDestinationStat(
             @PathVariable("destination_id") String destination_id,
             @RequestBody DestinationStat updatedStat) {
@@ -120,7 +120,7 @@ public class DestinationStatController {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/{destination_id}")
+    @DeleteMapping("/admin/statistics/{destination_id}")
     public ResponseEntity<String> deleteDestinationStat(@PathVariable String destination_id) {
         // Fetch all stats
         List<DestinationStat> allStats = destinationStatService.getAllDestinationStats();

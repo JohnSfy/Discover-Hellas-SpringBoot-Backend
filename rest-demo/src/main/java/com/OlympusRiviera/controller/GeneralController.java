@@ -3,12 +3,14 @@ package com.OlympusRiviera.controller;
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Amenity.AmenityCategory;
 import com.OlympusRiviera.model.Approval.Approval;
+import com.OlympusRiviera.model.Destination.DestinationStat;
 import com.OlympusRiviera.model.Event.Event;
 import com.OlympusRiviera.model.Plan.Plan;
 import com.OlympusRiviera.model.Review.Review;
 import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Approval.ApprovalService;
+import com.OlympusRiviera.service.Destination.DestinationStatService;
 import com.OlympusRiviera.service.Event.EventService;
 import com.OlympusRiviera.service.Plan.PlanService;
 import com.OlympusRiviera.service.Review.ReviewService;
@@ -33,14 +35,16 @@ public class GeneralController {
     private final PlanService planService;
     private final ReviewService reviewService;
     private final ApprovalService approvalService;
+    private final DestinationStatService destinationStatService;
 
-    public GeneralController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, PlanService planService, ReviewService reviewService, ApprovalService approvalService) {
+    public GeneralController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, PlanService planService, ReviewService reviewService, ApprovalService approvalService, DestinationStatService destinationStatService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
         this.planService = planService;
         this.reviewService = reviewService;
         this.approvalService = approvalService;
+        this.destinationStatService = destinationStatService;
     }
 
     //-----------------------Amenity--------------------------------------------------
@@ -431,7 +435,15 @@ public class GeneralController {
     }
 
 
+//-------------------------------Destination Stats----------------------------
 
+    //get all stats for destinations
+
+    @GetMapping("destination/statistics/get/all")
+    public ResponseEntity<List<DestinationStat>> getAllDestinationDetails() {
+        List<DestinationStat> destinationStats = destinationStatService.getAllDestinationStats();
+        return ResponseEntity.ok(destinationStats); // Return 200 OK with the list of destinations
+    }
 
 
 

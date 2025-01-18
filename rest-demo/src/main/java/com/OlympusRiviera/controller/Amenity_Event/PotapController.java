@@ -5,16 +5,19 @@ import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Amenity.AmenityCategory;
 import com.OlympusRiviera.model.Event.Event;
 import com.OlympusRiviera.model.Event.EventCategory;
+import com.OlympusRiviera.model.Review.Review;
 import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Event.EventCategoryService;
 import com.OlympusRiviera.service.Event.EventService;
+import com.OlympusRiviera.service.Review.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -24,12 +27,15 @@ public class PotapController {
     private final AmenityCategoryService amenityCategoryService;
     private final EventService eventService;
     private final EventCategoryService eventCategoryService;
+    private final ReviewService reviewService;
 
-    public PotapController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, EventCategoryService eventCategoryService) {
+
+    public PotapController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, EventCategoryService eventCategoryService, ReviewService reviewService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
         this.eventCategoryService = eventCategoryService;
+        this.reviewService = reviewService;
     }
 
     //----------------------------Amenity----------------------------------------------------------
@@ -160,4 +166,36 @@ public class PotapController {
         String message = "Event Category with id: " + category_id + " Deleted Successfully";
         return ResponseEntity.status(HttpStatus.OK).body(message); // Return 204 No Content after deletion
     }
+
+
+    //---------------------------------Reviews------------------------------------------
+
+    // Get all reviews for a specific destination or activity
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/feedback/get/{entity_id}/evaluation/get/all")
+    public ResponseEntity<?> getAllReviewsForEntity(@PathVariable String entity_id) {
+        try {
+            // Fetch all reviews
+            List<Review> allReviews = reviewService.getAllReviews();
+
+            // Filter reviews by entity_id
+            List<Review> filteredReviews = allReviews.stream()
+                    .filter(review -> entity_id.equals(review.getEntity_id()))
+                    .collect(Collectors.toList());
+
+            // Check if any reviews match the entity_id
+            if (filteredReviews.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No reviews found for entity_id: " + entity_id);
+            }
+
+            // Return the filtered reviews
+            return ResponseEntity.ok(filteredReviews); // 200 OK with the list of reviews
+        } catch (Exception e) {
+            // Handle unexpected exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while fetching reviews: " + e.getMessage());
+        }
+    }
+
 }
