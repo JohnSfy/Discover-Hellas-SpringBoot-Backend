@@ -116,10 +116,10 @@ public class ProviderController {
     }
 
 
-    //Get all Events for specific provider with ?provider_id = test
+    //Get all Events for specific provider
     @PreAuthorize("hasRole('ROLE_PROVIDER')")
-    @GetMapping("/event/get/all")
-    public ResponseEntity<?> getAllEventsForProvider(@RequestParam String provider_id) {
+    @GetMapping("/event/get/all/{provider_id}")
+    public ResponseEntity<?> getAllEventsForProvider(@PathVariable String provider_id) {
         // Fetch all events
         List<Event> allEvents = eventService.getAllEvents();
 
@@ -137,6 +137,8 @@ public class ProviderController {
         // Return the filtered events
         return ResponseEntity.ok(filteredEvents);
     }
+
+
 
 
 
@@ -223,10 +225,10 @@ public class ProviderController {
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
-    //get all amenities for specific provider_id - organizer with amenity/get/all?provider_id = somethng
+    //get all amenities for specific provider_id - organizer
     @PreAuthorize("hasRole('ROLE_PROVIDER')")
-    @GetMapping("/amenity/get/all")
-    public ResponseEntity<?> getAllAmenitiesForProvider(@RequestParam String provider_id) {
+    @GetMapping("/amenity/get/all/{provider_id}")
+    public ResponseEntity<?> getAllAmenitiesForProvider(@PathVariable String provider_id) {
         // Fetch all amenities
         List<Amenity> allAmenities = amenityService.getAllAmenities();
 

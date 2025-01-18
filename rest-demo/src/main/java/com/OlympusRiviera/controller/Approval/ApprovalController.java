@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -136,7 +137,9 @@ public class ApprovalController {
     //Update the status of Create Request
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/amenity/add-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
-    public ResponseEntity<String> updateCreateAmenityApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
+    public ResponseEntity<String> updateCreateAmenityApprovalStatus(@PathVariable("approval_id") String approval_id,
+                                                                    @RequestParam("status") String status,
+                                                                    @RequestBody Map<String, String> requestBody) {
         // Fetch the approval request by amenity_id
         Approval approval = approvalService.getApproval(approval_id);
         Amenity amenity =  amenityService.getAmenity(approval.getEntity_id());
@@ -153,49 +156,76 @@ public class ApprovalController {
                     .body("Cannot update status for non-pending or non-create requests.");
         }
 
+        // Get the comments from the request body
+        String comments = requestBody.get("comments");
+        if (comments != null && !comments.isEmpty()) {
+            approval.setComments(comments); // Set the comments in the approval
+        }
         // Update the status of the approval request
         approval.setStatus(status); // Status should be either "ACCEPTED" or "REJECTED"
         amenity.setStatus(status);
         approvalService.updateApproval(approval);
         amenityService.updateAmenity(amenity);
         // Return success message
-        return ResponseEntity.ok("Approval request for amenity ID: " + approval.getEntity_id() + " has been updated to status: " + status);
+        return ResponseEntity.ok("Approval request for amenity ID: " + approval.getEntity_id()
+                + " has been updated to status: " + status
+                + (comments != null ? " with comments: " + comments : ""));
     }
 
-    //Update status of Edit request
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/amenity/edit-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
-    public ResponseEntity<String> updateEditAmenityApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
-        // Fetch the approval request by amenity_id
-        Approval approval = approvalService.getApproval(approval_id);
-        Amenity amenity =  amenityService.getAmenity(approval.getEntity_id());
+    public ResponseEntity<String> updateEditAmenityApprovalStatus(
+            @PathVariable("approval_id") String approval_id,
+            @RequestParam("status") String status,
+            @RequestBody Map<String, String> requestBody) {
 
+        // Fetch the approval request by approval_id
+        Approval approval = approvalService.getApproval(approval_id);
         if (approval == null) {
             // Return 404 Not Found if the approval request does not exist
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Approval request not found for ID: " + approval_id);
         }
 
-        // Check if the request is pending and for a "Create" operation
+        // Fetch the amenity by entity_id
+        Amenity amenity = amenityService.getAmenity(approval.getEntity_id());
+        if (amenity == null) {
+            // Return 404 Not Found if the amenity does not exist
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Amenity not found for ID: " + approval.getEntity_id());
+        }
+
+        // Check if the request is pending and for a "Edit" operation
         if (!"PENDING".equals(approval.getStatus()) || !"Edit".equals(approval.getApproval_type())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Cannot update status for non-pending or non-edit requests.");
         }
 
+        // Get the comments from the request body
+        String comments = requestBody.get("comments");
+        if (comments != null && !comments.isEmpty()) {
+            approval.setComments(comments); // Set the comments in the approval
+        }
+
         // Update the status of the approval request
-        approval.setStatus(status); // Status should be either "ACCEPTED" or "REJECTED"
+        approval.setStatus(status); // Status should be either "APPROVED" or "REJECTED"
         amenity.setStatus(status);
         approvalService.updateApproval(approval);
         amenityService.updateAmenity(amenity);
 
-        //Se
-        if("APPROVED".equals(status)){
+        // If the status is "APPROVED", delete the old amenity record
+        if ("APPROVED".equals(status)) {
             amenityService.deleteAmenity(approval.getOld_entity_id());
         }
 
         // Return success message
-        return ResponseEntity.ok("Approval request for amenity ID: " + approval.getEntity_id() + " has been updated to status: " + status);
+        return ResponseEntity.ok("Approval request for amenity ID: " + approval.getEntity_id()
+                + " has been updated to status: " + status
+                + (comments != null ? " with comments: " + comments : ""));
     }
+
+
 
 
     //---------------------------Event-------------------------------------
@@ -305,7 +335,9 @@ public class ApprovalController {
     //Update the status of Create Request
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/event/add-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
-    public ResponseEntity<String> updateCreateEventApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
+    public ResponseEntity<String> updateCreateEventApprovalStatus(@PathVariable("approval_id") String approval_id,
+                                                                  @RequestParam("status") String status,
+                                                                  @RequestBody Map<String, String> requestBody) {
 
         Approval approval = approvalService.getApproval(approval_id);
         Event event =  eventService.getEvent(approval.getEntity_id());
@@ -321,20 +353,29 @@ public class ApprovalController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Cannot update status for non-pending or non-create requests.");
         }
-
+        String comments = requestBody.get("comments");
+        if (comments != null && !comments.isEmpty()) {
+            approval.setComments(comments); // Set the comments in the approval
+        }
         // Update the status of the approval request
         approval.setStatus(status); // Status should be either "ACCEPTED" or "REJECTED"
         event.setStatus(status);
         approvalService.updateApproval(approval);
         eventService.updateEvent(event);
         // Return success message
-        return ResponseEntity.ok("Approval request for Event ID: " + approval.getEntity_id() + " has been updated to status: " + status);
+        return ResponseEntity.ok("Approval request for Event ID: " + approval.getEntity_id()
+                + " has been updated to status: " + status
+                + (comments != null ? " with comments: " + comments : ""));
     }
+
+
 
     //Update status of Edit request
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/approval/event/edit-request/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
-    public ResponseEntity<String> updateEditEventApprovalStatus(@PathVariable("approval_id") String approval_id, @RequestParam("status") String status) {
+    public ResponseEntity<String> updateEditEventApprovalStatus(@PathVariable("approval_id") String approval_id,
+                                                                @RequestParam("status") String status,
+                                                                @RequestBody Map<String, String> requestBody) {
         // Fetch the approval request by amenity_id
         Approval approval = approvalService.getApproval(approval_id);
         Event event =  eventService.getEvent(approval.getEntity_id());
@@ -351,6 +392,10 @@ public class ApprovalController {
                     .body("Cannot update status for non-pending or non-edit requests.");
         }
 
+        String comments = requestBody.get("comments");
+        if (comments != null && !comments.isEmpty()) {
+            approval.setComments(comments); // Set the comments in the approval
+        }
         // Update the status of the approval request
         approval.setStatus(status); // Status should be either "ACCEPTED" or "REJECTED"
         event.setStatus(status);
@@ -363,7 +408,9 @@ public class ApprovalController {
         }
 
         // Return success message
-        return ResponseEntity.ok("Approval request for Event ID: " + approval.getEntity_id() + " has been updated to status: " + status);
+        return ResponseEntity.ok("Approval request for Event ID: " + approval.getEntity_id()
+                + " has been updated to status: " + status
+                + (comments != null ? " with comments: " + comments : ""));
     }
 
 
@@ -412,11 +459,48 @@ public class ApprovalController {
 
 
 
+    //----------------------------General-------------------------------
+    //Get All Rejection Approvals for Amenity/Event
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/approval/{entity_id}/rejections/get/all")
+    public ResponseEntity<Object> getRejectionsForEntityAdmin(@PathVariable("entity_id") String entity_id) {
+        // Fetch all approvals
+        List<Approval> allApprovals = approvalService.getAllApprovals();
+
+        // Filter approvals by entity_id and status "REJECTED", with null checks
+        List<Approval> matchingApprovals = allApprovals.stream()
+                .filter(approval ->
+                        approval.getEntity_id() != null &&
+                                approval.getEntity_id().equals(entity_id) &&
+                                "REJECTED".equals(approval.getStatus())
+                )
+                .collect(Collectors.toList());
+
+        // Check if any matching approvals were found
+        if (matchingApprovals.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No rejected approvals found for entity with ID: " + entity_id);
+        }
+
+        // Return the matching approvals
+        return ResponseEntity.ok(matchingApprovals);
+    }
+
+
+
+
+
+
+
+
+
+
 
     //-----------------------------------Provider-----------------------------------------------------
     //------------------------------------------------------------------------------------------------
 
     //-----------------------------------Event--------------------------------------------------------
+
 
     // Get a pending approval to Edit it again?!
 // If this returns 200, you can understand that the event with id event_id is Edited and pending for approval
@@ -447,11 +531,10 @@ public class ApprovalController {
         }
     }
 
-    // Get all approvals (approved/pending/rejected) from a specific provider with ?provider_id=id
-
+    // Get all approvals (approved/pending/rejected) from a specific provider
     @PreAuthorize("hasRole('ROLE_PROVIDER')")
-    @GetMapping("/provider/approval/event/get/all")
-    public ResponseEntity<Object> getAllEventApprovalsForProvider(@RequestParam("provider_id") String provider_id) {
+    @GetMapping("/provider/approval/event/get/all/{provider_id}")
+    public ResponseEntity<Object> getAllEventApprovalsForProvider(@PathVariable("provider_id") String provider_id) {
         // Fetch all approvals
         List<Approval> allApprovals = approvalService.getAllApprovals();
 
@@ -470,6 +553,11 @@ public class ApprovalController {
             return ResponseEntity.ok(providerApprovals);
         }
     }
+
+
+
+
+
 
 
     //------------------------------------------Amenities---------------------------------------
@@ -529,15 +617,33 @@ public class ApprovalController {
     }
 
 
+    //-----------------General----------------------
 
+    //Get All Rejection Approvals for Amenity/Event
+    @PreAuthorize("hasRole('ROLE_PROVIDER')")
+    @GetMapping("/provider/approval/{entity_id}/rejections/get/all")
+    public ResponseEntity<Object> getRejectionsForEntityProvider(@PathVariable("entity_id") String entity_id) {
+        // Fetch all approvals
+        List<Approval> allApprovals = approvalService.getAllApprovals();
 
+        // Filter approvals by entity_id and status "REJECTED", with null checks
+        List<Approval> matchingApprovals = allApprovals.stream()
+                .filter(approval ->
+                        approval.getEntity_id() != null &&
+                                approval.getEntity_id().equals(entity_id) &&
+                                "REJECTED".equals(approval.getStatus())
+                )
+                .collect(Collectors.toList());
 
+        // Check if any matching approvals were found
+        if (matchingApprovals.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No rejected approvals found for entity with ID: " + entity_id);
+        }
 
-
-
-
-
-
+        // Return the matching approvals
+        return ResponseEntity.ok(matchingApprovals);
+    }
 
 
 }
