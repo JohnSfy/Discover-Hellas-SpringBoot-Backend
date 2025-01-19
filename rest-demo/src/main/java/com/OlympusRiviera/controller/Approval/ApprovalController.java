@@ -420,6 +420,9 @@ public class ApprovalController {
 
     //------------------------------Reviews------------------------------
 
+
+
+
     //Get specific review approval
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/review/get/{approval_id}")
@@ -506,6 +509,33 @@ public ResponseEntity<String> updateReviewStatus(@PathVariable("approval_id") St
     return ResponseEntity.ok("Approval request for Review ID: " + approval.getEntity_id()
             + " has been updated to status: " + status);
 }
+
+
+//------------------------------Reviews------------------------------
+
+    // Get approval for specific review ID
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/approval/review/get/{review_id}")
+    public ResponseEntity<Object> getApprovalForSpecificReview(@PathVariable("review_id") String review_id) {
+        // Fetch all approvals
+        List<Approval> allApprovals = approvalService.getAllApprovals();
+
+        // Find approval for the given review ID
+        Approval approval = allApprovals.stream()
+                .filter(a -> review_id.equals(a.getEntity_id()))
+                .findFirst()
+                .orElse(null);
+
+        if (approval == null) {
+            // Return 404 Not Found if no approval is found for the review ID
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No approval found for review ID: " + review_id);
+        }
+
+        // Return 200 OK with the approval details
+        return ResponseEntity.ok(approval);
+    }
+
 
 
 
