@@ -4,9 +4,11 @@ package com.OlympusRiviera.controller.Approval;
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Approval.Approval;
 import com.OlympusRiviera.model.Event.Event;
+import com.OlympusRiviera.model.Review.Review;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Approval.ApprovalService;
 import com.OlympusRiviera.service.Event.EventService;
+import com.OlympusRiviera.service.Review.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,11 +25,13 @@ public class ApprovalController {
     private final ApprovalService approvalService;
     private final AmenityService amenityService;
     private final EventService eventService;
+    private final ReviewService reviewService;
 
-    public ApprovalController(ApprovalService approvalService, AmenityService amenityService, EventService eventService) {
+    public ApprovalController(ApprovalService approvalService, AmenityService amenityService, EventService eventService, ReviewService reviewService) {
         this.approvalService = approvalService;
         this.amenityService = amenityService;
         this.eventService = eventService;
+        this.reviewService = reviewService;
     }
 
     // -----------------Amenity-------------------------------
@@ -415,6 +419,8 @@ public class ApprovalController {
 
 
     //------------------------------Reviews------------------------------
+
+    //Get specific review approval
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/review/get/{approval_id}")
     public ResponseEntity<Object> getReviewDetails(@PathVariable("approval_id") String approval_id) {
@@ -431,9 +437,10 @@ public class ApprovalController {
 
     }
 
+    //get all review approvals
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/review/get/all")
-    public ResponseEntity<Object> getAllReviews() {
+    public ResponseEntity<Object> getAllApprovalReviews() {
 
         // Fetch all approvals
         List<Approval> allApprovals = approvalService.getAllApprovals();
@@ -456,6 +463,50 @@ public class ApprovalController {
 
 
     }
+
+
+
+// Approve or Reject an Review
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PutMapping("/admin/approval/review/get/{approval_id}/updateStatus") // WITH ?status=APPROVED/REJECTED
+public ResponseEntity<String> updateReviewStatus(@PathVariable("approval_id") String approval_id,
+                                                 @RequestParam("status") String status) {
+
+    // Validate the status parameter
+    if (!"APPROVED".equalsIgnoreCase(status) && !"REJECTED".equalsIgnoreCase(status)) {
+        return ResponseEntity.badRequest()
+                .body("Invalid status value. Allowed values are APPROVED or REJECTED.");
+    }
+
+    // Fetch the Approval object
+    Approval approval = approvalService.getApproval(approval_id);
+    if (approval == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Approval request not found for ID: " + approval_id);
+    }
+
+    // Fetch the Review object
+    if (approval.getEntity_id() == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Entity ID not found for Approval ID: " + approval_id);
+    }
+    Review review = reviewService.getReview(approval.getEntity_id());
+    if (review == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Review not found for Entity ID: " + approval.getEntity_id());
+    }
+
+    // Update statuses
+    approval.setStatus(status);
+    review.setStatus(status);
+    approvalService.updateApproval(approval);
+    reviewService.updateReview(review);
+
+    // Return success message
+    return ResponseEntity.ok("Approval request for Review ID: " + approval.getEntity_id()
+            + " has been updated to status: " + status);
+}
+
 
 
 

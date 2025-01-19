@@ -420,7 +420,7 @@ public class GeneralController {
         reviewService.createReview(review);
         // Create a new Approval record
         Approval approval = new Approval();
-        approval.setEntity_id(review.getEntity_id());
+        approval.setEntity_id(review.getReview_id());
         approval.setEntity_type("Review");
         approval.setApproval_type("Create");
         approval.setStatus("PENDING");
@@ -432,6 +432,37 @@ public class GeneralController {
         String message = "Review with id: " + review.getReview_id() + " created successfully and pending approval " +"with id "+ approval.getApproval_id();
         // Response message
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
+    }
+
+
+    // Get all reviews for a specific destination or activity
+    @GetMapping("/feedback/get/{entity_id}/evaluation/get/all")
+    public ResponseEntity<?> getAllReviewsForEntity(@PathVariable String entity_id) {
+        try {
+            // Fetch all reviews
+            List<Review> allReviews = reviewService.getAllReviews();
+
+            // Filter reviews by entity_id
+            List<Review> filteredReviews = allReviews.stream()
+                    .filter(review -> entity_id.equals(review.getEntity_id()) &&
+                            "APPROVED".equals(review.getStatus()) &&
+                            "VISIBLE".equals(review.getView())
+                             )
+                    .collect(Collectors.toList());
+
+            // Check if any reviews match the entity_id
+            if (filteredReviews.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No reviews found for entity_id: " + entity_id);
+            }
+
+            // Return the filtered reviews
+            return ResponseEntity.ok(filteredReviews); // 200 OK with the list of reviews
+        } catch (Exception e) {
+            // Handle unexpected exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while fetching reviews: " + e.getMessage());
+        }
     }
 
 

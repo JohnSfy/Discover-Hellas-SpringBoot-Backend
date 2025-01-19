@@ -170,32 +170,80 @@ public class PotapController {
 
     //---------------------------------Reviews------------------------------------------
 
-    // Get all reviews for a specific destination or activity
+
+
+
+
+
+    // Get all reviews
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/feedback/get/{entity_id}/evaluation/get/all")
-    public ResponseEntity<?> getAllReviewsForEntity(@PathVariable String entity_id) {
+    @GetMapping("/feedback/evaluation/get/all")
+    public ResponseEntity<?> getAllReviews() {
+
         try {
             // Fetch all reviews
             List<Review> allReviews = reviewService.getAllReviews();
 
-            // Filter reviews by entity_id
-            List<Review> filteredReviews = allReviews.stream()
-                    .filter(review -> entity_id.equals(review.getEntity_id()))
-                    .collect(Collectors.toList());
-
-            // Check if any reviews match the entity_id
-            if (filteredReviews.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("No reviews found for entity_id: " + entity_id);
-            }
-
             // Return the filtered reviews
-            return ResponseEntity.ok(filteredReviews); // 200 OK with the list of reviews
+            return ResponseEntity.ok(allReviews); // 200 OK with the list of reviews
         } catch (Exception e) {
             // Handle unexpected exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while fetching reviews: " + e.getMessage());
         }
     }
+
+
+    // Get a specific  reviews
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/feedback/evaluation/get/{review_id}")
+    public ResponseEntity<?> getSpecificReview(@PathVariable String review_id) {
+
+        try {
+            // Fetch all reviews
+            Review review = reviewService.getReview(review_id);
+
+            // Return the filtered reviews
+            return ResponseEntity.ok(review); // 200 OK with the list of reviews
+        } catch (Exception e) {
+            // Handle unexpected exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while fetching reviews: " + e.getMessage());
+        }
+    }
+
+
+
+    //Update the view visible/hidden with ?visible=true/False
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/feedback/evaluation/get/{review_id}/view")
+    public ResponseEntity<?> updateReviewVisibility(@PathVariable String review_id,
+                                                    @RequestParam("visible") String visible) {
+        // Fetch the Review object by its ID
+        Review review = reviewService.getReview(review_id);
+        if (review == null) {
+            // Return 404 if the review is not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Review not found for ID: " + review_id);
+        }
+
+        // Validate and parse the 'visible' string
+        if (!"true".equalsIgnoreCase(visible) && !"false".equalsIgnoreCase(visible)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid value for 'visible'. Expected 'true' or 'false'.");
+        }
+
+        // Convert string to boolean
+        boolean isVisible = Boolean.parseBoolean(visible);
+
+        // Update the visibility status
+        review.setView(isVisible ? "VISIBLE" : "HIDDEN");
+        reviewService.updateReview(review);
+
+        // Return success message
+        String visibilityStatus = isVisible ? "now visible to the public" : "no longer visible to the public";
+        return ResponseEntity.ok("Review ID: " + review_id + " is " + visibilityStatus + ".");
+    }
+
 
 }
