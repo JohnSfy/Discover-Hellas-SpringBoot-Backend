@@ -511,11 +511,10 @@ public ResponseEntity<String> updateReviewStatus(@PathVariable("approval_id") St
 }
 
 
-//------------------------------Reviews------------------------------
 
     // Get approval for specific review ID
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/approval/review/get/{review_id}")
+    @GetMapping("/admin/approval/review/{review_id}/approval")
     public ResponseEntity<Object> getApprovalForSpecificReview(@PathVariable("review_id") String review_id) {
         // Fetch all approvals
         List<Approval> allApprovals = approvalService.getAllApprovals();
