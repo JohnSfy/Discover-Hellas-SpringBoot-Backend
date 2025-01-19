@@ -1,15 +1,25 @@
 package com.OlympusRiviera.controller;
 
+import com.OlympusRiviera.model.Activity.Activity;
+import com.OlympusRiviera.model.Activity.ActivityCategory;
+import com.OlympusRiviera.model.Activity.ActivityStat;
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Amenity.AmenityCategory;
 import com.OlympusRiviera.model.Approval.Approval;
+import com.OlympusRiviera.model.Destination.Destination;
+import com.OlympusRiviera.model.Destination.DestinationCategory;
 import com.OlympusRiviera.model.Destination.DestinationStat;
 import com.OlympusRiviera.model.Event.Event;
 import com.OlympusRiviera.model.Plan.Plan;
 import com.OlympusRiviera.model.Review.Review;
+import com.OlympusRiviera.service.Activity.ActivityCategoryService;
+import com.OlympusRiviera.service.Activity.ActivityService;
+import com.OlympusRiviera.service.Activity.ActivityStatService;
 import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Approval.ApprovalService;
+import com.OlympusRiviera.service.Destination.DestinationCategoryService;
+import com.OlympusRiviera.service.Destination.DestinationService;
 import com.OlympusRiviera.service.Destination.DestinationStatService;
 import com.OlympusRiviera.service.Event.EventService;
 import com.OlympusRiviera.service.Plan.PlanService;
@@ -36,8 +46,13 @@ public class GeneralController {
     private final ReviewService reviewService;
     private final ApprovalService approvalService;
     private final DestinationStatService destinationStatService;
+    private final DestinationService destinationService;
+    private final DestinationCategoryService destinationCategoryService;
+    private final ActivityStatService activityStatService;
+    private final ActivityService activityService;
+    private final ActivityCategoryService activityCategoryService;
 
-    public GeneralController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, PlanService planService, ReviewService reviewService, ApprovalService approvalService, DestinationStatService destinationStatService) {
+    public GeneralController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, PlanService planService, ReviewService reviewService, ApprovalService approvalService, DestinationStatService destinationStatService, DestinationService destinationService, DestinationCategoryService destinationCategoryService, ActivityStatService activityStatService, ActivityService activityService, ActivityCategoryService activityCategoryService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
@@ -45,6 +60,11 @@ public class GeneralController {
         this.reviewService = reviewService;
         this.approvalService = approvalService;
         this.destinationStatService = destinationStatService;
+        this.destinationService = destinationService;
+        this.destinationCategoryService = destinationCategoryService;
+        this.activityStatService = activityStatService;
+        this.activityService = activityService;
+        this.activityCategoryService = activityCategoryService;
     }
 
     //-----------------------Amenity--------------------------------------------------
@@ -466,17 +486,118 @@ public class GeneralController {
     }
 
 
-//-------------------------------Destination Stats----------------------------
 
-    //get all stats for destinations
 
+//------------------------------Destinations------------------------------
+
+    // Get all stats for destinations
     @GetMapping("/destination/statistics/get/all")
-    public ResponseEntity<List<DestinationStat>> getAllDestinationDetails() {
+    public ResponseEntity<List<DestinationStat>> getAllDestinationStatisticDetails() {
         List<DestinationStat> destinationStats = destinationStatService.getAllDestinationStats();
         return ResponseEntity.ok(destinationStats); // Return 200 OK with the list of destinations
     }
 
+    // Get all destination details
+    @GetMapping("/destination/get/all")
+    public ResponseEntity<List<Destination>> getAllDestinationDetails() {
+        List<Destination> destinations = destinationService.getAllDestinations();
+        return ResponseEntity.ok(destinations); // Return 200 OK with the list of destinations
+    }
 
+    // Get details of a specific destination by ID
+    @GetMapping("/destination/{destination_id}")
+    public ResponseEntity<Destination> getDestinationDetails(@PathVariable("destination_id") String destination_id) {
+        Destination destinationDetails = destinationService.getDestination(destination_id);
+        if (destinationDetails != null) {
+            return ResponseEntity.ok(destinationDetails); // Return 200 OK with the destination
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 Not Found if the destination doesn't exist
+        }
+    }
+
+    // Get all destinations from a specific category id
+    @GetMapping("/destination/{category_id}/destinations")
+    public ResponseEntity<?> getDestinationsByCategory(@PathVariable("category_id") String category_id) {
+        // Fetch all destinations
+        List<Destination> allDestinations = destinationService.getAllDestinations();
+
+        // Filter destinations by category_id
+        List<Destination> filteredDestinations = allDestinations.stream()
+                .filter(destination -> category_id.equals(destination.getCategory_id()))
+                .collect(Collectors.toList());
+
+        if (filteredDestinations.isEmpty()) {
+            // Return 404 with a custom message if no destinations are found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No destinations found for category ID: " + category_id);
+        } else {
+            // Return 200 OK with the filtered list
+            return ResponseEntity.ok(filteredDestinations);
+        }
+    }
+
+    // Get all destination Categories
+    @GetMapping("/destination/category/get/all")
+    public ResponseEntity<List<DestinationCategory>> getAllDestinationCategoryDetails() {
+        List<DestinationCategory> destinationCategories = destinationCategoryService.getAllDestinationCategories();
+        return ResponseEntity.ok(destinationCategories); // Return 200 OK with the list of destination categories
+    }
+
+
+//--------------------------Activities---------------------------------------
+
+    // Get all stats for activities
+    @GetMapping("/activity/statistics/get/all")
+    public ResponseEntity<List<ActivityStat>> getAllActivityStats() {
+        List<ActivityStat> activityStats = activityStatService.getAllActivityStats();
+        return ResponseEntity.ok(activityStats); // Return 200 OK with the list of activity stats
+    }
+
+    // Get all activity details
+    @GetMapping("/activity/get/all")
+    public ResponseEntity<List<Activity>> getAllActivityDetails() {
+        List<Activity> activities = activityService.getAllActivities();
+        return ResponseEntity.ok(activities); // Return 200 OK with the list of activities
+    }
+
+    // Get details of a specific activity by ID
+    @GetMapping("/activity/{activity_id}")
+    public ResponseEntity<Activity> getActivityDetails(@PathVariable("activity_id") String activity_id) {
+        Activity activityDetails = activityService.getActivity(activity_id);
+        if (activityDetails != null) {
+            return ResponseEntity.ok(activityDetails); // Return 200 OK with the activity
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 Not Found if the activity doesn't exist
+        }
+    }
+
+    // Get all activities from a specific category id
+    @GetMapping("/activity/{category_id}/activities")
+    public ResponseEntity<?> getActivitiesByCategory(@PathVariable("category_id") String category_id) {
+        // Fetch all activities
+        List<Activity> allActivities = activityService.getAllActivities();
+
+        // Filter activities by category_id
+        List<Activity> filteredActivities = allActivities.stream()
+                .filter(activity -> category_id.equals(activity.getCategory_id()))
+                .collect(Collectors.toList());
+
+        if (filteredActivities.isEmpty()) {
+            // Return 404 with a custom message if no activities are found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No activities found for category ID: " + category_id);
+        } else {
+            // Return 200 OK with the filtered list
+            return ResponseEntity.ok(filteredActivities);
+        }
+    }
+
+    // Get all activity category details
+    @GetMapping("/activity/category/get/all")
+    public ResponseEntity<List<ActivityCategory>> getAllActivityCategoryDetails() {
+        List<ActivityCategory> activityCategories = activityCategoryService.getAllActivityCategories();
+        return ResponseEntity.ok(activityCategories); // Return 200 OK with the list of activity categories
+    }
 
 
 }

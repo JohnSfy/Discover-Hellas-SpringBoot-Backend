@@ -9,9 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api")
 public class DestinationController {
@@ -24,23 +21,7 @@ public class DestinationController {
         this.destinationStatService = destinationStatService;
     }
 
-    // Get details of a specific destination by ID
-    @GetMapping("/destination/{destination_id}")
-    public ResponseEntity<Destination> getDestinationDetails(@PathVariable("destination_id") String destination_id) {
-        Destination destinationDetails = destinationService.getDestination(destination_id);
-        if (destinationDetails != null) {
-            return ResponseEntity.ok(destinationDetails); // Return 200 OK with the destination
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 Not Found if the destination doesn't exist
-        }
-    }
 
-    // Get all destination details
-    @GetMapping("/destination/get/all")
-    public ResponseEntity<List<Destination>> getAllDestinationDetails() {
-        List<Destination> destinations = destinationService.getAllDestinations();
-        return ResponseEntity.ok(destinations); // Return 200 OK with the list of destinations
-    }
 
     // Create a new destination from POTAP
 
@@ -88,25 +69,4 @@ public class DestinationController {
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
-
-    //get all destinations from specific category id
-    @GetMapping("/destination/{category_id}/destinations")
-    public ResponseEntity<?> getDestinationsByCategory(@PathVariable("category_id") String category_id) {
-        // Fetch all destinations
-        List<Destination> allDestinations = destinationService.getAllDestinations();
-
-        // Filter destinations by category_id
-        List<Destination> filteredDestinations = allDestinations.stream()
-                .filter(destination -> category_id.equals(destination.getCategory_id()))
-                .collect(Collectors.toList());
-
-        if (filteredDestinations.isEmpty()) {
-            // Return 404 with a custom message if no destinations are found
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No destinations found for category ID: " + category_id);
-        } else {
-            // Return 200 OK with the filtered list
-            return ResponseEntity.ok(filteredDestinations);
-        }
-    }
 }

@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api")
 public class DestinationCategoryController {
@@ -33,17 +31,6 @@ public class DestinationCategoryController {
         }
     }
 
-
-
-    // Get all destination details
-
-    @GetMapping("/destination/category/get/all")
-    public ResponseEntity<List<DestinationCategory>> getAllDestinationCategoryDetails() {
-        List<DestinationCategory> destinationCategories = destinationCategoryService.getAllDestinationCategories();
-        return ResponseEntity.ok(destinationCategories); // Return 200 OK with the list of destinations
-    }
-
-    // Create a new destination
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/destination/category/create")

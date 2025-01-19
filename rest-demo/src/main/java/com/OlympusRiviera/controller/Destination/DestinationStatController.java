@@ -24,7 +24,7 @@ public class DestinationStatController {
     //getStats for the specified destination, if the dest stat is null, informs
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/statistics/{destination_id}")
+    @GetMapping("/admin/destination/statistics/{destination_id}")
     public ResponseEntity<?> getStatsByDestinationId(@PathVariable("destination_id") String destination_id) {
         // Fetch all stats
         List<DestinationStat> allStats = destinationStatService.getAllDestinationStats();
@@ -44,21 +44,12 @@ public class DestinationStatController {
         }
     }
 
-    //get all stats for destinations
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/get/all")
-    public ResponseEntity<List<DestinationStat>> getAllDestinationDetails() {
-        List<DestinationStat> destinationStats = destinationStatService.getAllDestinationStats();
-        return ResponseEntity.ok(destinationStats); // Return 200 OK with the list of destinations
-    }
-
 
     //checks if there is a statistic for a destination and if exist then not allowing to create
     //another one
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/admin/statistics/create")
+    @PostMapping("/admin/destination/statistics/create")
     public ResponseEntity<String> createDestinationStat(@RequestBody DestinationStat destinationStat) {
         // Check if a record with the same destination_id already exists
         List<DestinationStat> existingStats = destinationStatService.getAllDestinationStats()
@@ -82,7 +73,7 @@ public class DestinationStatController {
     //update stats for specified destination
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/admin/statistics/{destination_id}")
+    @PutMapping("/admin/destination/statistics/{destination_id}")
     public ResponseEntity<String> updateDestinationStat(
             @PathVariable("destination_id") String destination_id,
             @RequestBody DestinationStat updatedStat) {
@@ -120,7 +111,7 @@ public class DestinationStatController {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/admin/statistics/{destination_id}")
+    @DeleteMapping("/admin/destination/statistics/{destination_id}")
     public ResponseEntity<String> deleteDestinationStat(@PathVariable String destination_id) {
         // Fetch all stats
         List<DestinationStat> allStats = destinationStatService.getAllDestinationStats();
