@@ -133,7 +133,8 @@ public class SecurityConfig {
                                 "/api/destination/**",
                                 "/api/user/register",
                                 "/api/user/login",
-                                "/api/feedback/**"
+                                "/api/feedback/**",
+                                "/api/activity/**"
                         ).permitAll() // Open access to these APIs
                         // Restrict access to Admin APIs
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
