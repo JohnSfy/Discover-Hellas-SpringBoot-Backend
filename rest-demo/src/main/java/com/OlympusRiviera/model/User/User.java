@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name="users")
+@Inheritance(strategy = InheritanceType.JOINED)  // Add this
 @Data
 public class User {
 
@@ -20,6 +21,8 @@ public class User {
     private String password;
     private String email;
     private String photo;
+    private String phone;
+    private String address;
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
@@ -30,7 +33,7 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    public User(String user_id, String username, String firstname, String lastname, String email, Role role, String password, String googleId, String photo) {
+    public User(String user_id, String username, String firstname, String lastname, String email, Role role, String password, String googleId, String photo, String phone, String address) {
         this.user_id = generateId(); //random id for user
         this.username = username;
         this.email = email;
@@ -40,6 +43,8 @@ public class User {
         this.password = password;
         this.googleId = googleId;
         this.photo = photo;
+        this.phone = phone;
+        this.address = address;
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }

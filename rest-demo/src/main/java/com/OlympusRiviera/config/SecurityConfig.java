@@ -131,7 +131,7 @@ public class SecurityConfig {
                                 "/api/plan/**",
                                 "/api/amenity/**",
                                 "/api/destination/**",
-                                "/api/user/register",
+                                "/api/user/register/**",
                                 "/api/user/login",
                                 "/api/feedback/**",
                                 "/api/activity/**"

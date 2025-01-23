@@ -1,5 +1,6 @@
 package com.OlympusRiviera.controller;
 
+import com.OlympusRiviera.model.User.RegisteredUser;
 import com.OlympusRiviera.model.User.Role;
 import com.OlympusRiviera.model.User.User;
 import com.OlympusRiviera.service.JWT.JWTService;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -41,6 +41,7 @@ public class UserController {
             // Step 1: Extract Google JWT token from request
             String googleJwtToken = (String) requestBody.get("jwt_token");
             String role = (String) requestBody.get("role");
+
             if (googleJwtToken == null || googleJwtToken.trim().isEmpty()) {
                 response.put("error", "Google JWT token is required.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.writeValueAsString(response));
@@ -93,9 +94,39 @@ public class UserController {
                 user.setRole(Role.valueOf(role));
 
 
-                userService.createUser(user);
+//                RegisteredUser registeredUser = new RegisteredUser();
+//                registeredUser.setUser_id(user.getUser_id());
+//                userService.createRegisteredUser(registeredUser);
+
+                if(role.equals("REGISTERED")){
+                    RegisteredUser registeredUser = new RegisteredUser(
+                            user.getUser_id(),  // User ID (make sure it's properly set)
+                            null,  // User name
+                            user.getFirstname(),
+                            user.getLastname(),
+                            user.getEmail(),
+                            user.getRole(),
+                            null,
+                            user.getGoogleId(),
+                            user.getPhoto(),
+                            null,
+                            null,
+                            null,  // Assuming hobbies is available
+                            null  // Assuming preferences is available
+                    );
+                    userService.createRegisteredUser(registeredUser);
+                }
+                //                userService.createUser(user);
+
+
+
+
+
+
+                // Now, user_id will be inherited from the User parent class
+
                 response.put("jwt_token", jwtService.generateToken(user));
-                response.put("message", "User with id " + user.getUser_id() + " created successfully");
+                response.put("message", "User with id " +  user.getUser_id() + " created successfully");
             } catch (IllegalArgumentException e) {
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.writeValueAsString(response));
@@ -111,6 +142,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(objectMapper.writeValueAsString(response));
         }
     }
+
+
+
+
 
 
     @PostMapping("/login")
@@ -164,12 +199,44 @@ public class UserController {
         }
     }
 
-    @GetMapping("/test")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Map<String, String>> adminTest() {
-        // Example response for testing purposes
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Hello, Admin! This is a secured API.");
-        return ResponseEntity.ok(response);
+//    @PostMapping("/register/test")
+//    public ResponseEntity<String> test(@RequestBody Map<String, Object> requestBody) {
+//        String user_id = (String) requestBody.get("user_id");
+//        String hobbies = (String) requestBody.get("hobbies").toString();
+//        String preferences = (String) requestBody.get("preferences").toString();
+//
+//        //User existingUser = userService.getUser(googleId);
+//
+//            // If the user exists, create RegisteredUser
+//          //  userService.createRegisteredUser(user_id, hobbies, preferences);
+//            return ResponseEntity.ok("Registered user added successfully." + hobbies);
+//
+//    }
+
+//    @PostMapping("/register/test")
+//    public ResponseEntity<Map<String, Object>> test(@RequestBody Map<String, Object> requestBody) {
+//        String user_id = (String) requestBody.get("user_id");
+//
+//        // Cast hobbies as a List<Map<String, Object>> because hobbies is an array of objects
+//        List<Map<String, Object>> hobbies = (List<Map<String, Object>>) requestBody.get("hobbies");
+//
+//        // Cast preferences as Map<String, Object> because it's a map
+//        Map<String, Object> preferences = (Map<String, Object>) requestBody.get("preferences");
+//        userService.createRegisteredUser(user_id, hobbies.toString(), preferences.toString());
+//        // Create the response map to return
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("user_id", user_id);
+//        response.put("preferences", preferences);
+//        response.put("hobbies", hobbies);
+//
+//        return ResponseEntity.ok(response);
+//    }
+
+    @GetMapping("/register/test/{id}")
+    public ResponseEntity<Optional<User>> getTest(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getRegisteredUser(id));
     }
+
+
 }
+

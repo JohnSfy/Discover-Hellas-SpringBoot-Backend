@@ -556,7 +556,6 @@ public class GeneralController {
     // Get all activity details
     @GetMapping("/activity/get/all")
     public ResponseEntity<List<Activity>> getAllActivityDetails() {
-        System.out.println("MPHKEEEEEEEE");
         List<Activity> activities = activityService.getAllActivities();
         return ResponseEntity.ok(activities); // Return 200 OK with the list of activities
     }

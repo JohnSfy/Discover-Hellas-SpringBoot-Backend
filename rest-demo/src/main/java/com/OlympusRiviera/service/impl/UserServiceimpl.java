@@ -1,14 +1,17 @@
 package com.OlympusRiviera.service.impl;
 
+import com.OlympusRiviera.model.User.RegisteredUser;
 import com.OlympusRiviera.model.User.User;
 import com.OlympusRiviera.repository.User.UserRepository;
 import com.OlympusRiviera.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class UserServiceimpl implements UserService {
 
     private final UserRepository userRepository;
@@ -51,4 +54,18 @@ public class UserServiceimpl implements UserService {
     public Optional<User> findUserByGoogleId(String googleId) {
         return userRepository.findByGoogleId(googleId);
     }
+
+
+    public Optional<User> getRegisteredUser(String user_id){
+        return userRepository.findById(user_id);
+    }
+
+
+    @Override
+    public String createRegisteredUser(RegisteredUser user) {
+        userRepository.save(user);
+        return "Success";
+    }
+
+
 }
