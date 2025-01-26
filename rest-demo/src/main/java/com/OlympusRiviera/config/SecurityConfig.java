@@ -131,7 +131,7 @@ public class SecurityConfig {
                                 "/api/plan/**",
                                 "/api/amenity/**",
                                 "/api/destination/**",
-                                "/api/user/register/**",
+                                "/api/user/register",
                                 "/api/user/login",
                                 "/api/feedback/**",
                                 "/api/activity/**"
@@ -140,6 +140,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Restrict access to Provider APIs
                         .requestMatchers("/api/provider/**").hasRole("PROVIDER")
+                        .requestMatchers("/api/user/**").hasAnyRole("PROVIDER", "ADMIN", "REGISTERED")
                         .anyRequest().authenticated() // All other requests must be authenticated
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session

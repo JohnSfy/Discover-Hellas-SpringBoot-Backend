@@ -46,4 +46,7 @@ public class PlanServiceimpl implements PlanService {
     public List<Plan> getAllPlans() {
         return planRepository.findAll();
     }
+
 }
+
+

@@ -6,17 +6,22 @@ import com.OlympusRiviera.model.Amenity.AmenityCategory;
 import com.OlympusRiviera.model.Event.Event;
 import com.OlympusRiviera.model.Event.EventCategory;
 import com.OlympusRiviera.model.Review.Review;
+import com.OlympusRiviera.model.User.ProviderUser;
+import com.OlympusRiviera.model.User.Role;
+import com.OlympusRiviera.model.User.User;
 import com.OlympusRiviera.service.Amenity.AmenityCategoryService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Event.EventCategoryService;
 import com.OlympusRiviera.service.Event.EventService;
 import com.OlympusRiviera.service.Review.ReviewService;
+import com.OlympusRiviera.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,14 +33,16 @@ public class PotapController {
     private final EventService eventService;
     private final EventCategoryService eventCategoryService;
     private final ReviewService reviewService;
+    private final UserService userService;
 
 
-    public PotapController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, EventCategoryService eventCategoryService, ReviewService reviewService) {
+    public PotapController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, EventCategoryService eventCategoryService, ReviewService reviewService, UserService userService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
         this.eventCategoryService = eventCategoryService;
         this.reviewService = reviewService;
+        this.userService = userService;
     }
 
     //----------------------------Amenity----------------------------------------------------------
@@ -55,6 +62,7 @@ public class PotapController {
         String message = "Amenity with id: " + amenity.getAmenity_id() + " Created Successfully from ΠΟΤΑΠ";
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/amenity/edit/{amenity_id}")
     public ResponseEntity<String> updateAmenity(@PathVariable String amenity_id, @RequestBody Amenity amenity) {
@@ -84,6 +92,7 @@ public class PotapController {
         String message = "Amenity Category with id: " + amenityCategory.getCategory_id() + " Created Successfully";
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/amenity/category/{category_id}")
     public ResponseEntity<String> updateAmenityCategory(@PathVariable String category_id, @RequestBody AmenityCategory amenityCategory) {
@@ -100,8 +109,6 @@ public class PotapController {
         String message = "Amenity Category with id: " + category_id + " Deleted Successfully";
         return ResponseEntity.status(HttpStatus.OK).body(message); // Return 204 No Content after deletion
     }
-
-
 
 
     //-----------------------------------Event------------------------------------------------------
@@ -123,6 +130,7 @@ public class PotapController {
         String message = "Event with id: " + event.getEvent_id() + " Created Successfully from ΠΟΤΑΠ";
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/event/edit/{event_id}")
     public ResponseEntity<String> updateEvent(@PathVariable String event_id, @RequestBody Event event) {
@@ -132,6 +140,7 @@ public class PotapController {
         String message = "Amenity with id: " + event.getEvent_id() + " Updated Successfully";
         return ResponseEntity.ok(message); // Return 200 OK
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/event/delete/{event_id}")
     public ResponseEntity<String> deleteEvent(@PathVariable String event_id) {
@@ -169,10 +178,6 @@ public class PotapController {
 
 
     //---------------------------------Reviews------------------------------------------
-
-
-
-
 
 
     // Get all reviews
@@ -213,7 +218,6 @@ public class PotapController {
     }
 
 
-
     //Update the view visible/hidden with ?visible=true/False
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/feedback/evaluation/get/{review_id}/view")
@@ -246,4 +250,52 @@ public class PotapController {
     }
 
 
+    //-----------------------------Users-----------------------------------
+
+    //Get All Providers (PENDING OR NOT)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/providers/get/all")
+    public ResponseEntity<?> getAllProviders() {
+        try {
+            // Fetch all users
+            List<User> allUsers = userService.getAllUsers();
+
+            // Filter users with role "PROVIDER"
+            List<User> providers = allUsers.stream()
+                    .filter(user -> user.getRole() == Role.PROVIDER)
+                    .collect(Collectors.toList());
+
+            // Return the filtered providers
+            return ResponseEntity.ok(providers);
+        } catch (Exception e) {
+            // Handle unexpected exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while fetching providers: " + e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/providers/get/{provider_id}/updateStatus") // ?status=APPROVED/REJECTED
+    public ResponseEntity<String> updateProviderStatus(
+            @PathVariable("provider_id") String provider_id,
+            @RequestParam("status") String status) {
+
+        // Validate the status parameter
+        if (!"APPROVED".equalsIgnoreCase(status) && !"REJECTED".equalsIgnoreCase(status)) {
+            return ResponseEntity.badRequest()
+                    .body("Invalid status value. Allowed values are APPROVED or REJECTED.");
+        }
+
+        // Fetch the user by ID
+        Optional<ProviderUser> providerOpt = userService.getProviderUser(provider_id);
+
+        providerOpt.get().setStatus(status);
+        userService.updateUser(Optional.of(providerOpt.get()));
+
+//        // Return success message
+        return ResponseEntity.ok("Provider ID: " + provider_id + " is now " + status);
+    }
+
+
 }
+

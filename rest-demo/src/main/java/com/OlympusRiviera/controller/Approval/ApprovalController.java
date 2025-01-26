@@ -1,12 +1,17 @@
 package com.OlympusRiviera.controller.Approval;
 
 
+import com.OlympusRiviera.model.Activity.ActivityStat;
 import com.OlympusRiviera.model.Amenity.Amenity;
 import com.OlympusRiviera.model.Approval.Approval;
+import com.OlympusRiviera.model.Destination.DestinationStat;
 import com.OlympusRiviera.model.Event.Event;
+import com.OlympusRiviera.model.Review.Entity_Type;
 import com.OlympusRiviera.model.Review.Review;
+import com.OlympusRiviera.service.Activity.ActivityStatService;
 import com.OlympusRiviera.service.Amenity.AmenityService;
 import com.OlympusRiviera.service.Approval.ApprovalService;
+import com.OlympusRiviera.service.Destination.DestinationStatService;
 import com.OlympusRiviera.service.Event.EventService;
 import com.OlympusRiviera.service.Review.ReviewService;
 import org.springframework.http.HttpStatus;
@@ -26,12 +31,16 @@ public class ApprovalController {
     private final AmenityService amenityService;
     private final EventService eventService;
     private final ReviewService reviewService;
+    private final DestinationStatService destinationStatService;
+    private final ActivityStatService activityStatService;
 
-    public ApprovalController(ApprovalService approvalService, AmenityService amenityService, EventService eventService, ReviewService reviewService) {
+    public ApprovalController(ApprovalService approvalService, AmenityService amenityService, EventService eventService, ReviewService reviewService, DestinationStatService destinationStatService, ActivityStatService activityStatService) {
         this.approvalService = approvalService;
         this.amenityService = amenityService;
         this.eventService = eventService;
         this.reviewService = reviewService;
+        this.destinationStatService = destinationStatService;
+        this.activityStatService = activityStatService;
     }
 
     // -----------------Amenity-------------------------------
@@ -504,6 +513,54 @@ public ResponseEntity<String> updateReviewStatus(@PathVariable("approval_id") St
     review.setStatus(status);
     approvalService.updateApproval(approval);
     reviewService.updateReview(review);
+
+    //Update the Entity Stats if the review is APPROVED
+    if(status.equals("APPROVED")) {
+        System.out.println("review entity type  " + review.getEntity_type());
+
+        if (review.getEntity_type() == Entity_Type.DESTINATION) {
+            List<DestinationStat> filteredStats = null;
+            List<DestinationStat> allStats = destinationStatService.getAllDestinationStats();
+
+            // Filter stats by destination_id
+            filteredStats = allStats.stream()
+                    .filter(stat -> review.getEntity_id().equals(stat.getDestination_id()))
+                    .toList();
+
+            System.out.println("aaaaaa " + filteredStats.toString());
+
+            float average_rating = filteredStats.get(0).getAverage_rating();
+            int total_ratings = filteredStats.get(0).getTotal_feedback_given();
+
+            float new_average_rating = (average_rating * total_ratings + review.getRating()) / (total_ratings + 1);
+            filteredStats.get(0).setAverage_rating(new_average_rating);
+            filteredStats.get(0).setTotal_feedback_given(total_ratings + 1);
+            destinationStatService.updateDestinationStat(filteredStats.get(0));
+
+
+        }else if(review.getEntity_type() == Entity_Type.ACTIVITY){
+            List<ActivityStat> filteredStats = null;
+
+            List<ActivityStat> allStats = activityStatService.getAllActivityStats();
+
+            // Filter stats by destination_id
+            filteredStats = allStats.stream()
+                    .filter(stat -> review.getEntity_id().equals(stat.getActivity_id()))
+                    .toList();
+
+            float average_rating = filteredStats.get(0).getAverage_rating();
+            int total_ratings = filteredStats.get(0).getTotal_feedback_given();
+
+            float new_average_rating = (average_rating * total_ratings + review.getRating()) / (total_ratings + 1);
+            filteredStats.get(0).setAverage_rating(new_average_rating);
+            filteredStats.get(0).setTotal_feedback_given(total_ratings + 1);
+            activityStatService.updateActivityStat(filteredStats.get(0));
+
+        }
+
+
+    }
+
 
     // Return success message
     return ResponseEntity.ok("Approval request for Review ID: " + approval.getEntity_id()

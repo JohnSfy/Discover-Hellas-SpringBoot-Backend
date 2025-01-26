@@ -1,5 +1,6 @@
 package com.OlympusRiviera.service.impl;
 
+import com.OlympusRiviera.model.User.ProviderUser;
 import com.OlympusRiviera.model.User.RegisteredUser;
 import com.OlympusRiviera.model.User.User;
 import com.OlympusRiviera.repository.User.UserRepository;
@@ -27,11 +28,15 @@ public class UserServiceimpl implements UserService {
         return "Success";
     }
 
+
     @Override
-    public String updateUser(User cloudVentor) {
-//        more logic
-        userRepository.save(cloudVentor);
-        return "Updated Success";
+    public String updateUser(Optional<User> user) {
+        if (user.isPresent()) {
+            userRepository.save(user.get());
+            return "Updated Success";
+        } else {
+            return "User not found";
+        }
     }
 
     @Override
@@ -41,28 +46,43 @@ public class UserServiceimpl implements UserService {
     }
 
     @Override
-    public User getUser(String id) {
+    public Optional<User> getUser(String id) {
 
-        return userRepository.findById(id).get();
+        return userRepository.findById(id);
+    }
+
+    public Optional<ProviderUser> getProviderUser(String id) {
+        return userRepository.findById(id).map(user -> {
+            if (user instanceof ProviderUser) {
+                return (ProviderUser) user;
+            } else {
+                throw new IllegalArgumentException("User is not of type ProviderUser");
+            }
+        });
     }
 
     @Override
     public List<User> getAllUsers() {
-        return null;
+        return userRepository.findAll();
     }
 
-    public Optional<User> findUserByGoogleId(String googleId) {
+    public User findUserByGoogleId(String googleId) {
         return userRepository.findByGoogleId(googleId);
     }
 
 
-    public Optional<User> getRegisteredUser(String user_id){
-        return userRepository.findById(user_id);
-    }
-
+//    public Optional<User> getRegisteredUser(String user_id){
+//        return userRepository.findById(user_id);
+//    }
 
     @Override
     public String createRegisteredUser(RegisteredUser user) {
+        userRepository.save(user);
+        return "Success";
+    }
+
+    @Override
+    public String createProviderUser(ProviderUser user) {
         userRepository.save(user);
         return "Success";
     }

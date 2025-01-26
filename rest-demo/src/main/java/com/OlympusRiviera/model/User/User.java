@@ -33,7 +33,7 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    public User(String user_id, String username, String firstname, String lastname, String email, Role role, String password, String googleId, String photo, String phone, String address) {
+    public User(String username, String firstname, String lastname, String email, Role role, String password, String googleId, String photo, String phone, String address) {
         this.user_id = generateId(); //random id for user
         this.username = username;
         this.email = email;
@@ -50,6 +50,7 @@ public class User {
     }
 
     public User() {
+
     }
 
 

@@ -1,5 +1,6 @@
 package com.OlympusRiviera.controller;
 
+import com.OlympusRiviera.model.User.ProviderUser;
 import com.OlympusRiviera.model.User.RegisteredUser;
 import com.OlympusRiviera.model.User.Role;
 import com.OlympusRiviera.model.User.User;
@@ -9,9 +10,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,7 +62,7 @@ public class UserController {
                 String picture = (String) claims.get("picture");
 
                 // Step 3: Check if the user already exists
-                Optional<User> currentUser = userService.findUserByGoogleId(googleId);
+                Optional<User> currentUser = Optional.ofNullable(userService.findUserByGoogleId(googleId));
                 if (currentUser.isPresent()) {
                     // If user already exists, return a message with the user's details
                     response.put("message", "User with googleId " + googleId + " already exists.");
@@ -94,13 +97,13 @@ public class UserController {
                 user.setRole(Role.valueOf(role));
 
 
+
 //                RegisteredUser registeredUser = new RegisteredUser();
 //                registeredUser.setUser_id(user.getUser_id());
 //                userService.createRegisteredUser(registeredUser);
 
                 if(role.equals("REGISTERED")){
                     RegisteredUser registeredUser = new RegisteredUser(
-                            user.getUser_id(),  // User ID (make sure it's properly set)
                             null,  // User name
                             user.getFirstname(),
                             user.getLastname(),
@@ -115,18 +118,37 @@ public class UserController {
                             null  // Assuming preferences is available
                     );
                     userService.createRegisteredUser(registeredUser);
+                }else if(role.equals("PROVIDER")){
+                    ProviderUser providerUser = new ProviderUser(
+                            null,  // User name
+                            user.getFirstname(),
+                            user.getLastname(),
+                            user.getEmail(),
+                            user.getRole(),
+                            null,
+                            user.getGoogleId(),
+                            user.getPhoto(),
+                            null,
+                            null,
+                            null, //companyname
+                            null, //tin
+                            null, // legal document tin
+                            null, // legal document id
+                            "PENDING" // Because need approval
+
+                    );
+                    userService.createProviderUser(providerUser);
+
+                }else {
+                    userService.createUser(user);
+
                 }
-                //                userService.createUser(user);
 
 
 
-
-
-
-                // Now, user_id will be inherited from the User parent class
 
                 response.put("jwt_token", jwtService.generateToken(user));
-                response.put("message", "User with id " +  user.getUser_id() + " created successfully");
+                response.put("message", "User with id created successfully");
             } catch (IllegalArgumentException e) {
                 response.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.writeValueAsString(response));
@@ -169,7 +191,7 @@ public class UserController {
                 String googleId = (String) claims.get("sub");
 
                 // Step 3: Check if the user exists
-                Optional<User> currentUser = userService.findUserByGoogleId(googleId);
+                Optional<User> currentUser = Optional.ofNullable(userService.findUserByGoogleId(googleId));
                 if (currentUser.isEmpty()) {
                     // If user does not exist, return an error message
                     response.put("error", "User with googleId " + googleId + " does not exist.");
@@ -232,10 +254,177 @@ public class UserController {
 //        return ResponseEntity.ok(response);
 //    }
 
-    @GetMapping("/register/test/{id}")
-    public ResponseEntity<Optional<User>> getTest(@PathVariable String id) {
-        return ResponseEntity.ok(userService.getRegisteredUser(id));
+
+    //fetch user profile
+    @PreAuthorize("hasRole('ROLE_PROVIDER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_REGISTERED')")
+    @GetMapping("/{user_id}")
+    public ResponseEntity<Optional<User>> getUser(@PathVariable String user_id) {
+        return ResponseEntity.ok(userService.getUser(user_id));
     }
+
+
+
+
+    @PreAuthorize("hasRole('ROLE_PROVIDER') or hasRole('ROLE_ADMIN')")
+    @PutMapping("/updateProfile/Provider/{user_id}")
+    public ResponseEntity<Optional<User>> updateProviderProfile(@PathVariable String user_id, @RequestBody ProviderUser updatedUserData) {
+
+        // Print the incoming request details
+        System.out.println("Received request to update user profile for user_id: " + user_id);
+
+        // Fetch the user from the service
+        Optional<User> currentUserOptional = userService.getUser(user_id);
+        System.out.println("Fetched user from DB: " + (currentUserOptional.isPresent() ? currentUserOptional.get() : "No user found"));
+
+        // Check if the user exists
+        if (currentUserOptional.isEmpty()) {
+            System.out.println("User with id " + user_id + " not found");
+            return ResponseEntity.badRequest().body(null); // User not found
+        }
+
+        // Get the current user
+        User currentUser = currentUserOptional.get();
+
+        // Update common fields (those in the User table)
+        if (updatedUserData.getUsername() != null) {
+            System.out.println("Updating firstname from " + currentUser.getFirstname() + " to " + updatedUserData.getFirstname());
+            currentUser.setUsername(updatedUserData.getUsername());
+        }
+        if (updatedUserData.getLastname() != null) {
+            System.out.println("Updating lastname from " + currentUser.getLastname() + " to " + updatedUserData.getLastname());
+            currentUser.setLastname(updatedUserData.getLastname());
+        }
+        if (updatedUserData.getEmail() != null) {
+            System.out.println("Updating email from " + currentUser.getEmail() + " to " + updatedUserData.getEmail());
+            currentUser.setEmail(updatedUserData.getEmail());
+        }
+        if (updatedUserData.getPhone() != null) {
+            System.out.println("Updating phone from " + currentUser.getPhone() + " to " + updatedUserData.getPhone());
+            currentUser.setPhone(updatedUserData.getPhone());
+        }
+        if (updatedUserData.getAddress() != null) {
+            System.out.println("Updating address from " + currentUser.getAddress() + " to " + updatedUserData.getAddress());
+            currentUser.setAddress(updatedUserData.getAddress());
+        }
+
+        // Check if the currentUser is a ProviderUser
+        if (currentUser instanceof ProviderUser) {
+            ProviderUser providerUser = (ProviderUser) currentUser;
+
+            // Update fields specific to ProviderUser
+            if (updatedUserData.getCompany_name() != null) {
+                System.out.println("Updating company_name from " + providerUser.getCompany_name() + " to " + updatedUserData.getCompany_name());
+                providerUser.setCompany_name(updatedUserData.getCompany_name());
+            }
+            if (updatedUserData.getTin() != null) {
+                System.out.println("Updating tin from " + providerUser.getTin() + " to " + updatedUserData.getTin());
+                providerUser.setTin(updatedUserData.getTin());
+            }
+            if (updatedUserData.getLegal_document_tin() != null) {
+                System.out.println("Updating legal_document_tin from " + providerUser.getLegal_document_tin() + " to " + updatedUserData.getLegal_document_tin());
+                providerUser.setLegal_document_tin(updatedUserData.getLegal_document_tin());
+            }
+            if (updatedUserData.getLegal_document_id() != null) {
+                System.out.println("Updating legal_document_id from " + providerUser.getLegal_document_id() + " to " + updatedUserData.getLegal_document_id());
+                providerUser.setLegal_document_id(updatedUserData.getLegal_document_id());
+            }
+            if (updatedUserData.getStatus() != null) {
+                System.out.println("Updating status from " + providerUser.getStatus() + " to " + updatedUserData.getStatus());
+                providerUser.setStatus(updatedUserData.getStatus());
+            }
+        }
+
+        // Save the updated user (whether it's a regular User or ProviderUser)
+        userService.updateUser(Optional.of(currentUser));
+        System.out.println("User with id " + currentUser.getUser_id() + " updated successfully");
+
+        // Return the updated user as a response
+        return ResponseEntity.ok(currentUserOptional);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_REGISTERED')")
+    @PutMapping("/updateProfile/Registered/{user_id}")
+    public ResponseEntity<Optional<User>> updateRegisteredUser(@PathVariable String user_id, @RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
+
+
+        // Fetch the user from the service
+        Optional<User> currentUserOptional = userService.getUser(user_id);
+
+        // Check if the user exists
+        if (currentUserOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(null); // User not found
+        }
+
+        // Get the current user
+        User currentUser = currentUserOptional.get();
+
+        // Print the current user details before updating
+
+        // Update common fields (those in the User table)
+        if (requestBody.containsKey("username")) {
+            String username = (String) requestBody.get("username");
+            currentUser.setUsername(username);
+        }
+        if (requestBody.containsKey("firstname")) {
+            String firstname = (String) requestBody.get("firstname");
+            currentUser.setFirstname(firstname);
+        }
+        if (requestBody.containsKey("lastname")) {
+            String lastname = (String) requestBody.get("lastname");
+            currentUser.setLastname(lastname);
+        }
+        if (requestBody.containsKey("email")) {
+            String email = (String) requestBody.get("email");
+            currentUser.setEmail(email);
+        }
+        if (requestBody.containsKey("phone")) {
+            String phone = (String) requestBody.get("phone");
+            currentUser.setPhone(phone);
+        }
+        if (requestBody.containsKey("address")) {
+            String address = (String) requestBody.get("address");
+            currentUser.setAddress(address);
+        }
+
+
+        if (currentUser instanceof RegisteredUser) {
+            RegisteredUser registeredUser = (RegisteredUser) currentUser;
+
+            // Update fields specific to RegisteredUser (hobbies and preferences)
+            if (requestBody.containsKey("hobbies")) {
+                // Cast hobbies as a List<Map<String, Object>> because hobbies is an array of objects
+                List<Map<String, Object>> hobbies = (List<Map<String, Object>>) requestBody.get("hobbies");
+                System.out.println("Updating hobbies from " + registeredUser.getHobbies() + " to " + hobbies);
+
+                // Convert hobbies to a JSON string if needed, or store the object directly
+                ObjectMapper objectMapper = new ObjectMapper();
+                String hobbiesJson = objectMapper.writeValueAsString(hobbies);  // Convert to JSON string
+                registeredUser.setHobbies(hobbiesJson);  // Store the hobbies as a JSON string or directly if you prefer
+            }
+
+            if (requestBody.containsKey("preferences")) {
+                // Cast preferences as a List<Map<String, Object>> because it's a map (you might have preferences stored similarly)
+                List<Map<String, Object>> preferences = (List<Map<String, Object>>) requestBody.get("preferences");
+                System.out.println("Updating preferences from " + registeredUser.getPreferences() + " to " + preferences);
+
+                // Convert preferences to a JSON string if needed, or store the object directly
+                ObjectMapper objectMapper = new ObjectMapper();
+                String preferencesJson = objectMapper.writeValueAsString(preferences);  // Convert to JSON string
+                registeredUser.setPreferences(preferencesJson);  // Store the preferences as a JSON string or directly if you prefer
+            }
+        }
+
+
+        // Save the updated user (whether it's a regular User or RegisteredUser)
+        userService.updateUser(Optional.of(currentUser));
+        System.out.println("User with id " + currentUser.getUser_id() + " updated successfully");
+
+        // Return the updated user as a response
+        return ResponseEntity.ok(currentUserOptional);
+    }
+
+
 
 
 }
