@@ -4,8 +4,10 @@ import com.OlympusRiviera.model.User.ProviderUser;
 import com.OlympusRiviera.model.User.RegisteredUser;
 import com.OlympusRiviera.model.User.Role;
 import com.OlympusRiviera.model.User.User;
+import com.OlympusRiviera.model.Visit.Visit;
 import com.OlympusRiviera.service.JWT.JWTService;
 import com.OlympusRiviera.service.UserService;
+import com.OlympusRiviera.service.Visit.VisitService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.OlympusRiviera.service.JWT.verifyAndDecodeGoogleJwt.verifyAndDecodeGoogleJwt;
 
@@ -28,11 +31,13 @@ public class UserController {
     UserService userService;
     JWTService jwtService;
 
+    private final VisitService visitService;
 
-    public UserController(UserService userService, JWTService jwtService) {
+
+    public UserController(UserService userService, JWTService jwtService, VisitService visitService) {
         this.userService = userService;
         this.jwtService = jwtService;
-
+        this.visitService = visitService;
     }
 
     @PostMapping("/register")
@@ -423,6 +428,137 @@ public class UserController {
         // Return the updated user as a response
         return ResponseEntity.ok(currentUserOptional);
     }
+
+
+
+
+    //----------------------------Visits-----------------------------
+
+
+//    @PreAuthorize("hasRole('ROLE_REGISTERED')")
+//    @PostMapping("/visit/create")
+//    public ResponseEntity<String> createVisit(@RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
+//
+//        // Extract user_id from the request body
+//        String user_id = (String) requestBody.get("user_id");
+//
+//        // Extract the visits array from the request body
+//        List<Map<String, Object>> visits = (List<Map<String, Object>>) requestBody.get("visits");
+//
+//        // Convert visits into a JSON string
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String visitsJson = objectMapper.writeValueAsString(visits);
+//
+//        // Create a new Visit object
+//        Visit visitRelationship = new Visit();
+//        visitRelationship.setUser_id(user_id);
+//        visitRelationship.setVisits(visitsJson);  // Set the visits JSON string
+//        // Save the Visit object
+//        visitService.createVisit(visitRelationship);
+//
+//        // Return a success message with the visit relationship ID
+//        return ResponseEntity.ok("Visit with ID " + visitRelationship.getVisit_relationship_id() + " created successfully");
+//    }
+
+    @PreAuthorize("hasRole('ROLE_REGISTERED')")
+    @PostMapping("/visit/create")
+    public ResponseEntity<String> createVisit(@RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
+
+        // Extract user_id from the request body
+        String user_id = (String) requestBody.get("user_id");
+
+        // Fetch all visits and filter them by user_id
+        List<Visit> allVisits = visitService.getAllVisits(); // Assuming visitService.getAllVisits() fetches all visits
+
+        // Filter visits for the provided user_id
+        List<Visit> existingVisits = allVisits.stream()
+                .filter(visit -> visit.getUser_id().equals(user_id))
+                .collect(Collectors.toList());
+
+        // If there are any visits for the user_id, return an error response
+        if (!existingVisits.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("A visit already exists for user ID " + user_id);
+        }
+
+        // Extract the visits array from the request body
+        List<Map<String, Object>> visits = (List<Map<String, Object>>) requestBody.get("visits");
+
+        // Convert visits into a JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+        String visitsJson = objectMapper.writeValueAsString(visits);
+
+        // Create a new Visit object
+        Visit visitRelationship = new Visit();
+        visitRelationship.setUser_id(user_id);
+        visitRelationship.setVisits(visitsJson);  // Set the visits JSON string
+
+        // Save the new Visit object
+        visitService.createVisit(visitRelationship);
+
+        // Return a success message with the visit relationship ID
+        return ResponseEntity.ok("Visit with ID " + visitRelationship.getVisit_relationship_id() + " created successfully");
+    }
+
+
+
+    @PreAuthorize("hasRole('ROLE_REGISTERED')")
+    @GetMapping("/visit/all/{user_id}")
+    public ResponseEntity<List<Visit>> getAllVisitsforSpecificUser(@PathVariable String user_id) {
+        // Fetch all visits for the given user_id
+        List<Visit> visits = visitService.getAllVisits();
+
+        // Filter the visits to only include those belonging to the specific user_id
+        List<Visit> userVisits = visits.stream()
+               .filter(visit -> visit.getUser_id().equals(user_id))
+               .collect(Collectors.toList());
+
+
+        // Return the list of visits
+        return ResponseEntity.ok(userVisits);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_REGISTERED')")
+    @PutMapping("/visit/update/{user_id}")
+    public ResponseEntity<String> updateVisitForUser(@PathVariable String user_id,
+                                                     @RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
+
+        // Extract the visits array from the request body
+        List<Map<String, Object>> visits = (List<Map<String, Object>>) requestBody.get("visits");
+
+        // Convert visits into a JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+        String visitsJson = objectMapper.writeValueAsString(visits);
+
+        // Fetch all visits for all users
+        List<Visit> allVisits = visitService.getAllVisits();
+
+        // Filter the visits to find the one for the given user_id
+        Visit existingVisit = allVisits.stream()
+                .filter(visit -> visit.getUser_id().equals(user_id)) // Filter by user_id
+                .findFirst()
+                .orElse(null);
+
+        // If the visit doesn't exist for the given user, return an error message
+        if (existingVisit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No visits found for user ID " + user_id);
+        }
+
+        // Update the visits information for the found visit
+        existingVisit.setVisits(visitsJson); // Set the updated visits data
+
+        // Save the updated visit object
+        visitService.updateVisit(existingVisit);
+
+        // Return a success message with the user ID
+        return ResponseEntity.ok("Visits for user ID " + user_id + " updated successfully");
+    }
+
+
+
+
 
 
 
