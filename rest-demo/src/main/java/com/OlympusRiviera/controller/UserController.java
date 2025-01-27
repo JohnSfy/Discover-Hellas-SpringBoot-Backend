@@ -39,7 +39,6 @@ public class UserController {
     private final DestinationStatService destinationStatService;
     private final ActivityStatService activityStatService;
 
-
     public UserController(UserService userService, JWTService jwtService, VisitService visitService, DestinationStatService destinationStatService, ActivityStatService activityStatService) {
         this.userService = userService;
         this.jwtService = jwtService;
@@ -157,6 +156,11 @@ public class UserController {
 
                 }
 
+                User newUser = userService.findUserByGoogleId(user.getGoogleId());
+                Visit visit = new Visit();
+                visit.setUser_id(newUser.getUser_id());
+                visit.setVisits(null);
+                visitService.createVisit(visit);
 
 
 

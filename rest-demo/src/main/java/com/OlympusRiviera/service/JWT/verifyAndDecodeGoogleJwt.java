@@ -48,9 +48,9 @@ public class verifyAndDecodeGoogleJwt {
             throw new IllegalArgumentException("Invalid issuer: " + issuer);
         }
 
-        if (claims.getExpirationTime().before(new Date())) {
-            throw new IllegalArgumentException("Token has expired.");
-        }
+//        if (claims.getExpirationTime().before(new Date())) {
+//            throw new IllegalArgumentException("Token has expired.");
+//        }
 
         return claims.getClaims();
     }
