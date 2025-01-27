@@ -11,4 +11,5 @@ public interface DestinationStatService {
     public String deleteDestinationStat(String stat_id);
     public DestinationStat getDestinationStat(String stat_id);
     public List<DestinationStat> getAllDestinationStats();
+
 }

@@ -25,16 +25,13 @@ public class Visit {
     //  "user_id": "12345",
     //  "visits": [
     //    {
-    //      "entity_id": "destination_001",
-    //      "totalVisits": 5
+    //      "entity_id": "destination_001"
     //    },
     //    {
-    //      "entity_id": "activity_002",
-    //      "totalVisits": 3
+    //      "entity_id": "activity_002"
     //    },
     //    {
-    //      "entity_id": "destination_003",
-    //      "totalVisits": 8
+    //      "entity_id": "destination_003"
     //    }
     //  ]
     //}

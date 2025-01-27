@@ -44,4 +44,6 @@ public class DestinationStatServiceimpl implements DestinationStatService {
         return destinationStatRepository.findAll();
     }
 
+
+
 }
