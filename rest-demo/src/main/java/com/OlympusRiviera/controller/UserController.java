@@ -159,7 +159,7 @@ public class UserController {
                 User newUser = userService.findUserByGoogleId(user.getGoogleId());
                 Visit visit = new Visit();
                 visit.setUser_id(newUser.getUser_id());
-                visit.setVisits(null);
+                visit.setVisits("[]");
                 visitService.createVisit(visit);
 
 
