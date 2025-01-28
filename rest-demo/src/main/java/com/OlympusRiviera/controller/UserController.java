@@ -164,7 +164,7 @@ public class UserController {
 
 
 
-                response.put("jwt_token", jwtService.generateToken(user));
+                response.put("jwt_token", jwtService.generateToken(newUser));
                 response.put("message", "User with id created successfully");
             } catch (IllegalArgumentException e) {
                 response.put("error", e.getMessage());
