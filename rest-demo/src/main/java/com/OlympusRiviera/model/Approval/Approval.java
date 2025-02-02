@@ -17,7 +17,6 @@ public class Approval {
     private String entity_id;
     private String entity_type;
     private String user_id;
-    private String employee_id;
     private String status;
     private String old_entity_id;
     private String comments;
@@ -40,7 +39,6 @@ public class Approval {
         this.entity_id = entity_id;
         this.entity_type = entity_type;
         this.user_id = user_id;
-        this.employee_id = employee_id;
         this.status = status;
         this.old_entity_id = old_entity_id;
         this.comments = comments;
