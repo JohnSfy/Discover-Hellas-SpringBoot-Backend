@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://olympus-riviera-frontend.vercel.app","http://localhost:8080","http://localhost:5173") // Replace with your frontend URL
+                        .allowedOrigins("https://visit-pieria.vercel.app","http://localhost:8080","http://localhost:5173") // Replace with your frontend URL
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

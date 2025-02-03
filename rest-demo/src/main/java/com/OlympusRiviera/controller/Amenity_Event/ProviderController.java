@@ -50,7 +50,6 @@ public class ProviderController {
         approval.setApproval_type("Create"); // This is a "Create" approval type
         approval.setStatus("PENDING"); // Status is "PENDING" since it is awaiting approval
         approval.setUser_id(event.getOrganizer_id()); // Assuming this is available in Amenity
-        approval.setEmployee_id("employee_id_here"); // This might come from your session, token, etc.
 
         // Save the Approval object (assuming ApprovalService has a method to handle saving)
         approvalService.createApproval(approval);
@@ -98,7 +97,6 @@ public class ProviderController {
         approval.setApproval_type("Edit"); // Indicating this is for an edit operation
         approval.setStatus("PENDING");
         approval.setUser_id(newEvent.getOrganizer_id());
-        approval.setEmployee_id("employee_id_here"); // Replace as needed
         approvalService.createApproval(approval);
 
         // Return success message
@@ -162,7 +160,6 @@ public class ProviderController {
         approval.setApproval_type("Create"); // This is a "Create" approval type
         approval.setStatus("PENDING"); // Status is "PENDING" since it is awaiting approval
         approval.setUser_id(amenity.getProvider_id()); // Assuming this is available in Amenity
-        approval.setEmployee_id("employee_id_here"); // This might come from your session, token, etc.
 
         // Save the Approval object (assuming ApprovalService has a method to handle saving)
         approvalService.createApproval(approval);
@@ -208,7 +205,6 @@ public class ProviderController {
         approval.setApproval_type("Edit"); // Indicating this is for an edit operation
         approval.setStatus("PENDING");
         approval.setUser_id(newAmenity.getProvider_id());
-        approval.setEmployee_id("employee_id_here"); // Replace as needed
         approvalService.createApproval(approval);
 
         // Return success message
