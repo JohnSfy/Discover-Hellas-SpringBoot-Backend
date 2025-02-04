@@ -21,28 +21,7 @@ public class DestinationStatController {
     }
 
 
-    //getStats for the specified destination, if the dest stat is null, informs
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/destination/statistics/{destination_id}")
-    public ResponseEntity<?> getStatsByDestinationId(@PathVariable("destination_id") String destination_id) {
-        // Fetch all stats
-        List<DestinationStat> allStats = destinationStatService.getAllDestinationStats();
-
-        // Filter stats by destination_id
-        List<DestinationStat> filteredStats = allStats.stream()
-                .filter(stat -> destination_id.equals(stat.getDestination_id()))
-                .collect(Collectors.toList());
-
-        if (filteredStats.isEmpty()) {
-            // Return 404 with a custom message if no stats are found
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No statistics found for destination ID: " + destination_id);
-        } else {
-            // Return 200 OK with the filtered list
-            return ResponseEntity.ok(filteredStats);
-        }
-    }
 
 
     //checks if there is a statistic for a destination and if exist then not allowing to create

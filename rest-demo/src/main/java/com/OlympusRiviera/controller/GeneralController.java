@@ -536,6 +536,29 @@ public class GeneralController {
         }
     }
 
+
+    //getStats for the specified destination, if the dest stat is null, informs
+
+    @GetMapping("/destination/statistics/{destination_id}")
+    public ResponseEntity<?> getStatsByDestinationId(@PathVariable("destination_id") String destination_id) {
+        // Fetch all stats
+        List<DestinationStat> allStats = destinationStatService.getAllDestinationStats();
+
+        // Filter stats by destination_id
+        List<DestinationStat> filteredStats = allStats.stream()
+                .filter(stat -> destination_id.equals(stat.getDestination_id()))
+                .collect(Collectors.toList());
+
+        if (filteredStats.isEmpty()) {
+            // Return 404 with a custom message if no stats are found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No statistics found for destination ID: " + destination_id);
+        } else {
+            // Return 200 OK with the filtered list
+            return ResponseEntity.ok(filteredStats);
+        }
+    }
+
     // Get all destination Categories
     @GetMapping("/destination/category/get/all")
     public ResponseEntity<List<DestinationCategory>> getAllDestinationCategoryDetails() {
@@ -589,6 +612,27 @@ public class GeneralController {
         } else {
             // Return 200 OK with the filtered list
             return ResponseEntity.ok(filteredActivities);
+        }
+    }
+
+    // Get stats for the specified activity, if the stat is null, informs
+    @GetMapping("/activity/statistics/{activity_id}")
+    public ResponseEntity<?> getStatsByActivityId(@PathVariable("activity_id") String activity_id) {
+        // Fetch all stats
+        List<ActivityStat> allStats = activityStatService.getAllActivityStats();
+
+        // Filter stats by activity_id
+        List<ActivityStat> filteredStats = allStats.stream()
+                .filter(stat -> activity_id.equals(stat.getActivity_id()))
+                .collect(Collectors.toList());
+
+        if (filteredStats.isEmpty()) {
+            // Return 404 with a custom message if no stats are found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No statistics found for activity ID: " + activity_id);
+        } else {
+            // Return 200 OK with the filtered list
+            return ResponseEntity.ok(filteredStats);
         }
     }
 

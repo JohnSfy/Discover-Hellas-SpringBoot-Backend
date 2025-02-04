@@ -20,27 +20,7 @@ public class ActivityStatController {
         this.activityStatService = activityStatService;
     }
 
-    // Get stats for the specified activity, if the stat is null, informs
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/activity/statistics/{activity_id}")
-    public ResponseEntity<?> getStatsByActivityId(@PathVariable("activity_id") String activity_id) {
-        // Fetch all stats
-        List<ActivityStat> allStats = activityStatService.getAllActivityStats();
 
-        // Filter stats by activity_id
-        List<ActivityStat> filteredStats = allStats.stream()
-                .filter(stat -> activity_id.equals(stat.getActivity_id()))
-                .collect(Collectors.toList());
-
-        if (filteredStats.isEmpty()) {
-            // Return 404 with a custom message if no stats are found
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No statistics found for activity ID: " + activity_id);
-        } else {
-            // Return 200 OK with the filtered list
-            return ResponseEntity.ok(filteredStats);
-        }
-    }
 
     // Checks if there is a statistic for an activity and if it exists then not allowing to create
     // another one
