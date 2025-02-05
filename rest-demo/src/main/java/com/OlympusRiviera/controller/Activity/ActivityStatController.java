@@ -21,7 +21,7 @@ public class ActivityStatController {
     }
 
 
-
+    //NOT USED
     // Checks if there is a statistic for an activity and if it exists then not allowing to create
     // another one
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -45,6 +45,7 @@ public class ActivityStatController {
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
 
+    //NOT USED
     // Update stats for specified activity
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/activity/statistics/{activity_id}")
@@ -82,6 +83,7 @@ public class ActivityStatController {
         }
     }
 
+    //NOT USED
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/activity/statistics/{activity_id}")
     public ResponseEntity<String> deleteActivityStat(@PathVariable String activity_id) {

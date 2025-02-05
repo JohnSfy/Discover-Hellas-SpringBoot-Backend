@@ -527,7 +527,6 @@ public ResponseEntity<String> updateReviewStatus(@PathVariable("approval_id") St
                     .filter(stat -> review.getEntity_id().equals(stat.getDestination_id()))
                     .toList();
 
-            System.out.println("aaaaaa " + filteredStats.toString());
 
             float average_rating = filteredStats.get(0).getAverage_rating();
             int total_ratings = filteredStats.get(0).getTotal_feedback_given();

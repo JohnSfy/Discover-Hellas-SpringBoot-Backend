@@ -39,6 +39,7 @@ public class ActivityCategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
 
+    //NOT USED
     // Update an existing activity category by ID
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/activity/category/{category_id}")

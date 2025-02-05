@@ -56,6 +56,7 @@ public class ActivityController {
         return ResponseEntity.ok(message); // Return 200 OK
     }
 
+
     // Delete an activity by ID
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/activity/{activity_id}")

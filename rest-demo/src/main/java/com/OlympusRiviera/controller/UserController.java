@@ -450,87 +450,87 @@ public class UserController {
 
 
 
-    //Create user Visits and update the entity statistic
-    @PreAuthorize("hasRole('ROLE_REGISTERED')")
-    @PostMapping("/visit/create")
-    public ResponseEntity<String> createVisit(@RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
-
-        // Extract user_id from the request body
-        String user_id = (String) requestBody.get("user_id");
-
-        // Fetch all visits and filter them by user_id
-        List<Visit> allVisits = visitService.getAllVisits(); // Assuming visitService.getAllVisits() fetches all visits
-
-        // Filter visits for the provided user_id
-        List<Visit> existingVisits = allVisits.stream()
-                .filter(visit -> visit.getUser_id().equals(user_id))
-                .collect(Collectors.toList());
-
-        // If there are any visits for the user_id, return an error response
-        if (!existingVisits.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("A visit already exists for user ID " + user_id);
-        }
-
-        // Extract the visits array from the request body
-        List<Map<String, Object>> visits = (List<Map<String, Object>>) requestBody.get("visits");
-
-        // Convert visits into a JSON string
-        ObjectMapper objectMapper = new ObjectMapper();
-        String visitsJson = objectMapper.writeValueAsString(visits);
-
-        // Create a new Visit object
-        Visit visitRelationship = new Visit();
-        visitRelationship.setUser_id(user_id);
-        visitRelationship.setVisits(visitsJson);  // Set the visits JSON string
-
-        // Save the new Visit object
-        visitService.createVisit(visitRelationship);
-
-        // Now, process each entity in the visits list to update statistics
-        for (Map<String, Object> visit : visits) {
-            String entityId = (String) visit.get("entity_id"); // Get entity_id from the visit
-
-            // If the entity is a destination (starts with "dest_")
-            if (entityId.startsWith("dest_")) {
-                // Fetch all destination statistics
-                List<DestinationStat> allDestinationStats = destinationStatService.getAllDestinationStats();
-
-                // Find the destination stat that matches the destination_id (entityId)
-                DestinationStat matchingDestinationStat = allDestinationStats.stream()
-                        .filter(stat -> stat.getDestination_id().equals(entityId))
-                        .findFirst()
-                        .orElse(null);
-
-                // If the destination stat exists, increment the total_visits by 1
-                if (matchingDestinationStat != null) {
-                    matchingDestinationStat.setTotal_visits(matchingDestinationStat.getTotal_visits() + 1);
-                    destinationStatService.updateDestinationStat(matchingDestinationStat); // Save the updated destination stat
-                }
-            }
-            // If the entity is an activity (starts with "activ_")
-            else if (entityId.startsWith("activ_")) {
-                // Fetch all activity statistics
-                List<ActivityStat> allActivityStats = activityStatService.getAllActivityStats();
-
-                // Find the activity stat that matches the activity_id (entityId)
-                ActivityStat matchingActivityStat = allActivityStats.stream()
-                        .filter(stat -> stat.getActivity_id().equals(entityId))
-                        .findFirst()
-                        .orElse(null);
-
-                // If the activity stat exists, increment the total_visits by 1
-                if (matchingActivityStat != null) {
-                    matchingActivityStat.setTotal_visits(matchingActivityStat.getTotal_visits() + 1);
-                    activityStatService.updateActivityStat(matchingActivityStat); // Save the updated activity stat
-                }
-            }
-        }
-
-        // Return a success message with the visit relationship ID
-        return ResponseEntity.ok("Visit with ID " + visitRelationship.getVisit_relationship_id() + " created successfully");
-    }
-
+//    //Create user Visits and update the entity statistic
+//    @PreAuthorize("hasRole('ROLE_REGISTERED')")
+//    @PostMapping("/visit/create")
+//    public ResponseEntity<String> createVisit(@RequestBody Map<String, Object> requestBody) throws JsonProcessingException {
+//
+//        // Extract user_id from the request body
+//        String user_id = (String) requestBody.get("user_id");
+//
+//        // Fetch all visits and filter them by user_id
+//        List<Visit> allVisits = visitService.getAllVisits(); // Assuming visitService.getAllVisits() fetches all visits
+//
+//        // Filter visits for the provided user_id
+//        List<Visit> existingVisits = allVisits.stream()
+//                .filter(visit -> visit.getUser_id().equals(user_id))
+//                .collect(Collectors.toList());
+//
+//        // If there are any visits for the user_id, return an error response
+//        if (!existingVisits.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body("A visit already exists for user ID " + user_id);
+//        }
+//
+//        // Extract the visits array from the request body
+//        List<Map<String, Object>> visits = (List<Map<String, Object>>) requestBody.get("visits");
+//
+//        // Convert visits into a JSON string
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String visitsJson = objectMapper.writeValueAsString(visits);
+//
+//        // Create a new Visit object
+//        Visit visitRelationship = new Visit();
+//        visitRelationship.setUser_id(user_id);
+//        visitRelationship.setVisits(visitsJson);  // Set the visits JSON string
+//
+//        // Save the new Visit object
+//        visitService.createVisit(visitRelationship);
+//
+//        // Now, process each entity in the visits list to update statistics
+//        for (Map<String, Object> visit : visits) {
+//            String entityId = (String) visit.get("entity_id"); // Get entity_id from the visit
+//
+//            // If the entity is a destination (starts with "dest_")
+//            if (entityId.startsWith("dest_")) {
+//                // Fetch all destination statistics
+//                List<DestinationStat> allDestinationStats = destinationStatService.getAllDestinationStats();
+//
+//                // Find the destination stat that matches the destination_id (entityId)
+//                DestinationStat matchingDestinationStat = allDestinationStats.stream()
+//                        .filter(stat -> stat.getDestination_id().equals(entityId))
+//                        .findFirst()
+//                        .orElse(null);
+//
+//                // If the destination stat exists, increment the total_visits by 1
+//                if (matchingDestinationStat != null) {
+//                    matchingDestinationStat.setTotal_visits(matchingDestinationStat.getTotal_visits() + 1);
+//                    destinationStatService.updateDestinationStat(matchingDestinationStat); // Save the updated destination stat
+//                }
+//            }
+//            // If the entity is an activity (starts with "activ_")
+//            else if (entityId.startsWith("activ_")) {
+//                // Fetch all activity statistics
+//                List<ActivityStat> allActivityStats = activityStatService.getAllActivityStats();
+//
+//                // Find the activity stat that matches the activity_id (entityId)
+//                ActivityStat matchingActivityStat = allActivityStats.stream()
+//                        .filter(stat -> stat.getActivity_id().equals(entityId))
+//                        .findFirst()
+//                        .orElse(null);
+//
+//                // If the activity stat exists, increment the total_visits by 1
+//                if (matchingActivityStat != null) {
+//                    matchingActivityStat.setTotal_visits(matchingActivityStat.getTotal_visits() + 1);
+//                    activityStatService.updateActivityStat(matchingActivityStat); // Save the updated activity stat
+//                }
+//            }
+//        }
+//
+//        // Return a success message with the visit relationship ID
+//        return ResponseEntity.ok("Visit with ID " + visitRelationship.getVisit_relationship_id() + " created successfully");
+//    }
+//
 
 
 
