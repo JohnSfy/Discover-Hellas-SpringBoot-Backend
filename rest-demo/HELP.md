@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'com.OlympusRiviera.rest-demo' is invalid and this project uses 'com.OlympusRiviera.rest_demo' instead.
+* The original package name 'com.DiscoverHellas.rest-demo' is invalid and this project uses 'com.DiscoverHellas.rest_demo' instead.
 
 # Getting Started
 
