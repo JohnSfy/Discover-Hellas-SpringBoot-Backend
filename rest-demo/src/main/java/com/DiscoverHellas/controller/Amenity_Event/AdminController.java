@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
-public class PotapController {
+public class AdminController {
 
     private final AmenityService amenityService;
     private final AmenityCategoryService amenityCategoryService;
@@ -35,7 +35,7 @@ public class PotapController {
     private final UserService userService;
 
 
-    public PotapController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, EventCategoryService eventCategoryService, ReviewService reviewService, UserService userService) {
+    public AdminController(AmenityService amenityService, AmenityCategoryService amenityCategoryService, EventService eventService, EventCategoryService eventCategoryService, ReviewService reviewService, UserService userService) {
         this.amenityService = amenityService;
         this.amenityCategoryService = amenityCategoryService;
         this.eventService = eventService;
