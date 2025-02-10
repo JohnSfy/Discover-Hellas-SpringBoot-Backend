@@ -46,7 +46,7 @@ public class ApprovalController {
     // -----------------Amenity-------------------------------
 
 
-    //Ποταπ getting all pending Create amenity requests
+    //admin getting all pending Create amenity requests
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/amenity/add-request/get/all")
     public ResponseEntity<Object> getAllCreateAmenityApprovals() {
@@ -245,7 +245,7 @@ public class ApprovalController {
     //----------------------------------------------------------------
 
 
-    //Ποταπ getting all pending Create amenity requests
+    //Admin getting all pending Create amenity requests
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/approval/event/add-request/get/all")
     public ResponseEntity<Object> getAllCreateEventApprovals() {

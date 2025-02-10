@@ -23,7 +23,7 @@ public class ActivityController {
 
 
 
-    // Create a new activity from POTAP
+    // Create a new activity from admin
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/activity/create")
     public ResponseEntity<String> createActivityDetails(@RequestBody Activity activity) {

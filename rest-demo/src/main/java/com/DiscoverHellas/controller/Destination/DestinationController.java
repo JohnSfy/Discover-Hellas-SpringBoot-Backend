@@ -23,7 +23,7 @@ public class DestinationController {
 
 
 
-    // Create a new destination from POTAP
+    // Create a new destination from Admin
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/destination/create")

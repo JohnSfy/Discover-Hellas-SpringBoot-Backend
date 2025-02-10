@@ -53,12 +53,12 @@ public class AdminController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")// Create a new amenity from potap with status approved
+    @PreAuthorize("hasRole('ROLE_ADMIN')")// Create a new amenity from admin with status approved
     @PostMapping("/amenity/create")
     public ResponseEntity<String> createAmenityDetails(@RequestBody Amenity amenity) {
         amenity.setStatus("APPROVED");
         amenityService.createAmenity(amenity);
-        String message = "Amenity with id: " + amenity.getAmenity_id() + " Created Successfully from ΠΟΤΑΠ";
+        String message = "Amenity with id: " + amenity.getAmenity_id() + " Created Successfully from Admin";
         return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
     }
 
@@ -66,7 +66,7 @@ public class AdminController {
     @PutMapping("/amenity/edit/{amenity_id}")
     public ResponseEntity<String> updateAmenity(@PathVariable String amenity_id, @RequestBody Amenity amenity) {
         amenity.setAmenity_id(amenity_id);
-        amenity.setStatus("APPROVED"); //Because ΠΟΤΑΠ UPDATED the amenity
+        amenity.setStatus("APPROVED"); //Because admin UPDATED the amenity
         amenityService.updateAmenity(amenity);
         String message = "Amenity with id: " + amenity.getAmenity_id() + " Updated Successfully";
         return ResponseEntity.ok(message); // Return 200 OK
@@ -76,7 +76,7 @@ public class AdminController {
     @DeleteMapping("/amenity/delete/{amenity_id}")
     public ResponseEntity<String> deleteDestination(@PathVariable String amenity_id) {
         amenityService.deleteAmenity(amenity_id);
-        String message = "Amenity with id: " + amenity_id + " Deleted Successfully from ΠΟΤΑΠ";
+        String message = "Amenity with id: " + amenity_id + " Deleted Successfully from Admin";
         return ResponseEntity.status(HttpStatus.OK).body(message); // Use 200 OK instead
     }
 

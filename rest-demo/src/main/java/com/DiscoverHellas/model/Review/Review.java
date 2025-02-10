@@ -18,7 +18,7 @@ public class Review {
     private String user_id;
     private String entity_id;
     private String status;
-    private String view; // potap selects to show teh review to the public
+    private String view; // admin selects to show teh review to the public
 
     @Enumerated(value = EnumType.STRING)
     private Entity_Type entity_type;

@@ -33,7 +33,7 @@ public class ProviderController {
 
     //--------------------------------Event Controller----------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------
-    //Create request for a event entry and waiting potap to approve
+    //Create request for a event entry and waiting admin to approve
 
     @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @PostMapping("/event/add-request/create")
@@ -144,7 +144,7 @@ public class ProviderController {
 
     //---------------------------------Amenity Controller--------------------------------------------------
 
-    //Create request for a amenity entry and waiting potap to approve
+    //Create request for a amenity entry and waiting admin to approve
     @PreAuthorize("hasRole('ROLE_PROVIDER')")
     @PostMapping("/amenity/add-request/create")
     public ResponseEntity<String> createAmenityDetails(@RequestBody Amenity amenity) {
