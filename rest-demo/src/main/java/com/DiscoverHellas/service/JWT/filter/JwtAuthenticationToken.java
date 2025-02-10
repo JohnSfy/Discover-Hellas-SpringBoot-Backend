@@ -59,28 +59,20 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         this.role = role;
         setAuthenticated(true);
 
-        // Log the creation of the JwtAuthenticationToken
-        logger.info("a1a1a1a1 - JwtAuthenticationToken created with role: {}", role);
     }
 
     @Override
     public Object getCredentials() {
-        // Log the call to getCredentials
-        logger.debug("a1a1a1a1 - getCredentials called, returning null.");
         return null;
     }
 
     @Override
     public Object getPrincipal() {
-        // Log the call to getPrincipal
-        logger.debug("a1a1a1a1 - getPrincipal called.");
-
         String email = (String) claims.get("email");
         if (email == null) {
             email = "default@example.com";  // Handle null email case
-            logger.warn("a1a1a1a1 - Email not found in claims, using default: {}", email);
         } else {
-            logger.info("a1a1a1a1 - Email found: {}", email);
+            logger.info("Email found: {}", email);
         }
 
         return new User(email, "", getAuthorities());

@@ -153,26 +153,6 @@ public class GeneralController {
         }
     }
 
-//    //get all Events from specific category id
-//    @GetMapping("/event/{category_id}/events")
-//    public ResponseEntity<?> getEventsByCategory(@PathVariable("category_id") String category_id) {
-//        // Fetch all destinations
-//        List<Event> allEvents = eventService.getAllEvents();
-//
-//        // Filter events by category_id
-//        List<Event> filteredEvents = allEvents.stream()
-//                .filter(event -> category_id.equals(event.getCategory_id()))
-//                .collect(Collectors.toList());
-//
-//        if (filteredEvents.isEmpty()) {
-//            // Return 404 with a custom message if no events are found
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("No Events found for category ID: " + category_id);
-//        } else {
-//            // Return 200 OK with the filtered list
-//            return ResponseEntity.ok(filteredEvents);
-//        }
-//    }
 
 
     //------------------------------------Trip Plan----------------------------------

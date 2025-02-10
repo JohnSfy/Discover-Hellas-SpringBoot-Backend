@@ -90,18 +90,6 @@ public class SecurityConfig {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless JWT authentication
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/api/user/test", "/api/user/register", "/api/user/login").permitAll() // Allow unauthenticated access
-//                        .anyRequest().authenticated() // Require authentication for all other endpoints
-//                )
-//                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
-//        return http.build();
-//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

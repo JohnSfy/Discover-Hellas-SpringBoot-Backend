@@ -38,7 +38,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (jwtService.validateToken(token)) {
                 Map<String, Object> claims = jwtService.decodeToken(token);
                 String role = (String) claims.get("role");
-                System.out.println("rolosssss  : " + role);
+                System.out.println("role: " + role);
 
 
                 SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(claims, role));

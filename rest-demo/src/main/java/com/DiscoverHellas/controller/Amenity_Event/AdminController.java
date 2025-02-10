@@ -120,60 +120,6 @@ public class AdminController {
         return ResponseEntity.ok(events); // Return 200 OK with the list of destinations
     }
 
-//    // Create a new event from potap with status approved
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @PostMapping("/event/create")
-//    public ResponseEntity<String> createEventDetails(@RequestBody Event event) {
-//        event.setStatus("APPROVED");
-//        eventService.createEvent(event);
-//        String message = "Event with id: " + event.getEvent_id() + " Created Successfully from ΠΟΤΑΠ";
-//        return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
-//    }
-//
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @PutMapping("/event/edit/{event_id}")
-//    public ResponseEntity<String> updateEvent(@PathVariable String event_id, @RequestBody Event event) {
-//        event.setEvent_id(event_id);
-//        event.setStatus("APPROVED"); //Because ΠΟΤΑΠ UPDATED the amenity
-//        eventService.updateEvent(event);
-//        String message = "Amenity with id: " + event.getEvent_id() + " Updated Successfully";
-//        return ResponseEntity.ok(message); // Return 200 OK
-//    }
-//
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @DeleteMapping("/event/delete/{event_id}")
-//    public ResponseEntity<String> deleteEvent(@PathVariable String event_id) {
-//        eventService.deleteEvent(event_id);
-//        String message = "Event with id: " + event_id + " Deleted Successfully from ΠΟΤΑΠ";
-//        return ResponseEntity.status(HttpStatus.OK).body(message); // Use 200 OK instead
-//    }
-
-//    //-----------------------Event Category Control-----------------------------------
-//
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @PostMapping("/event/category/create")
-//    public ResponseEntity<String> createEventDetails(@RequestBody EventCategory eventCategory) {
-//        eventCategoryService.createEventCategory(eventCategory);
-//        String message = "Event Category with id: " + eventCategory.getCategory_id() + " Created Successfully";
-//        return ResponseEntity.status(HttpStatus.CREATED).body(message); // Return 201 Created
-//    }
-//
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @PutMapping("/event/category/{category_id}")
-//    public ResponseEntity<String> updateEventCategory(@PathVariable String category_id, @RequestBody EventCategory eventCategory) {
-//        eventCategory.setCategory_id(category_id);
-//        eventCategoryService.updateEventCategory(eventCategory);
-//        String message = "Event Category with id: " + eventCategory.getCategory_id() + " Updated Successfully";
-//        return ResponseEntity.ok(message); // Return 200 OK
-//    }
-//
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @DeleteMapping("/event/category/{category_id}")
-//    public ResponseEntity<String> deleteEventCategory(@PathVariable String category_id) {
-//        eventCategoryService.deleteEventCategory(category_id);
-//        String message = "Event Category with id: " + category_id + " Deleted Successfully";
-//        return ResponseEntity.status(HttpStatus.OK).body(message); // Return 204 No Content after deletion
-//    }
 
 
     //---------------------------------Reviews------------------------------------------
